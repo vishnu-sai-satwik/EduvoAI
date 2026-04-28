@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<!-- 
+  FINAL MASTER VERSION - ULTRA PREMIUM
+  - Name: Eduvo AI
+  - FEATURE REFRESH: Updated Bento Grid, Micro-animations, 3D Hero
+  - BUG FIX: Solved Firebase Auth Race Condition (No more random sign-outs)
+  - BUG FIX: Goal Search strictly requires Sign In and handles API properly.
+  - BUG FIX: Navbar/Mobile Menu auth toggle uses strict Tailwind classes.
+  - ADDED: Contact/Feedback email in footer.
+-->
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta name='impact-site-verification' value='5c27657f-deb8-40cb-b380-8bab37136a89'>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="description" content="Eduvo AI is your complete career ecosystem. Generate AI learning roadmaps, code in a live engineering simulator, and optimize your resume to beat the ATS.">
+    <meta name="keywords" content="Career Roadmap, AI Career Mentor, Engineering Simulator, Eduvo Forge, Resume ATS Checker, CV Match, Tech Careers">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduvo AI | Learn. Build. Get Hired.</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Three.js (for 3D animation) --><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Load Inter Font --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECJB4EMM1X"></script>
+     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ECJB4EMM1X');
+    </script>
+
+    <style>
+        /* --- Base Theme --- */
+        body { background-color: #0A0A0A; color: #EAEAEA; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        /* --- Hero 3D Canvas --- */
+        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; opacity: 0.4; mix-blend-mode: screen; pointer-events: none; }
+
+        /* --- Aurora Background Glows --- */
+        .aurora-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
+        .aurora-glow { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; will-change: transform; }
+        .aurora-1 { width: 500px; height: 500px; background: #A3E635; top: 0%; left: 10%; animation: float 20s infinite linear -10s; }
+        .aurora-2 { width: 400px; height: 400px; background: #60A5FA; bottom: 10%; right: 20%; animation: float 20s infinite linear -5s; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); } 50% { transform: translateY(40px) translateX(60px) rotate(20deg); } }
+
+        /* --- Glassmorphism Card Style --- */
+        .glass-card { background-color: rgba(30, 30, 30, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; transition: all 0.3s ease; }
+
+        /* --- Bento Grid Overrides & 3D Tilt --- */
+        .bento-card {
+            --mouse-x: 50%; --mouse-y: 50%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(163, 230, 53, 0.08), transparent 40%), rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; padding: 2rem;
+            transition: border-color 0.3s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
+            transform-style: preserve-3d; will-change: transform;
+        }
+        .bento-card:hover { border-color: rgba(163, 230, 53, 0.5); box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4); }
+        .bento-content-wrapper { transform: translateZ(30px); pointer-events: none; }
+        .bento-content-wrapper > * { pointer-events: auto; }
+        
+        /* --- Live Micro-Animations --- */
+        .scanner-box { position: relative; overflow: hidden; }
+        .scanner-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: #A3E635; box-shadow: 0 0 10px #A3E635, 0 0 20px #A3E635; animation: scan 2s ease-in-out infinite alternate; border-radius: 50%; z-index: 10; }
+        @keyframes scan { 0% { top: 5%; opacity: 0; } 10%, 90% { opacity: 1; } 100% { top: 95%; opacity: 0; } }
+
+        .typewriter-line { overflow: hidden; white-space: nowrap; border-right: 2px solid transparent; animation: typing 4s steps(40, end) infinite, blink-caret 0.75s step-end infinite; display: inline-block; vertical-align: bottom; width: 0; }
+        @keyframes typing { 0%, 20% { width: 0; } 80%, 100% { width: 100%; } }
+        @keyframes blink-caret { from, to { border-color: transparent; } 50% { border-color: #A3E635; } }
+
+        .pulse-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid #A3E635; animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        .icon-glow { filter: drop-shadow(0 0 8px rgba(163, 230, 53, 0.6)); }
+        .anim-sparkle { animation: spin-slow 6s linear infinite; transform-origin: center; }
+        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
+        .anim-flash { animation: flash 3s infinite; }
+        @keyframes flash { 0%, 40%, 100% { opacity: 1; transform: scale(1); } 20%, 60% { opacity: 0.6; transform: scale(0.95); } }
+        .anim-scan-container { position: relative; overflow: hidden; display: inline-block; }
+        .anim-scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: #A3E635; box-shadow: 0 0 8px #A3E635; animation: scanner 2s ease-in-out infinite alternate; }
+        @keyframes scanner { 0% { top: 0%; opacity: 0; } 20%, 80% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+        .anim-float { animation: float-icon 3s ease-in-out infinite; }
+        @keyframes float-icon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+        /* --- Premium CTA Grid Background --- */
+        .cta-bg {
+            background-color: #0A0A0A;
+            background-image: radial-gradient(circle at 50% 0%, rgba(163, 230, 53, 0.15), transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px; background-position: center top; border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- Sweeping Glow Buttons --- */
+        .btn-new {
+            background-image: linear-gradient(to right, #a3e635, #bef264); color: #172554; font-weight: 700; padding: 0.75rem 1.5rem;
+            border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 15px 0 rgba(163, 230, 53, 0.3); cursor: pointer; white-space: nowrap; z-index: 1;
+        }
+        .btn-new::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0) 100%);
+            transform: rotate(45deg) translateY(-100%); animation: sweep 3s infinite; z-index: -1;
+        }
+        @keyframes sweep { 0% { transform: rotate(45deg) translateY(-100%); } 20%, 100% { transform: rotate(45deg) translateY(100%); } }
+        .btn-new:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px 0 rgba(163, 230, 53, 0.5); }
+        .btn-new .btn-icon { transition: transform 0.3s ease; }
+        .btn-new:hover .btn-icon { transform: translateX(4px); }
+        
+        /* --- Logo Ticker --- */
+        .logo-ticker { width: 100%; overflow: hidden; padding: 1.5rem 0; white-space: nowrap; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .logo-ticker-content { display: inline-block; animation: scroll 40s linear infinite; }
+        .ticker-item { display: inline-block; font-size: 1.5rem; font-weight: 700; color: #52525b; margin: 0 3rem; transition: all 0.3s ease; }
+        .ticker-item:hover { color: #EAEAEA; transform: scale(1.1); text-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        
+        /* --- FAQ Accordion --- */
+        .faq-item details { transition: all 0.3s ease; }
+        .faq-item summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; }
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-item summary .faq-icon { transition: transform 0.3s ease; }
+        .faq-item details[open] summary .faq-icon { transform: rotate(45deg); color: white; }
+
+        /* --- Profile Icon --- */
+        .profile-icon {
+            width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(145deg, #A3E635, #60A5FA);
+            border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; transform-style: preserve-3d;
+        }
+        .profile-icon:hover { transform: scale(1.1) rotateZ(10deg); box-shadow: 0 4px 15px rgba(163, 230, 53, 0.5); }
+        .profile-icon svg { width: 24px; height: 24px; color: #0A0A0A; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5)); }
+        
+        /* --- Fade-in on scroll --- */
+        .fade-in { opacity: 0; transform: translateY(30px) scale(0.95); transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .fade-in.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* --- AI Mentor Orb & Chat --- */
+        .mentor-orb { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: radial-gradient(circle, #BEF264, #A3E635); border-radius: 50%; box-shadow: 0 0 25px 0 rgba(163, 230, 53, 0.7); animation: pulse 4s infinite ease-in-out; z-index: 999; cursor: pointer; transition: all 0.3s ease; }
+        .mentor-orb::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid #A3E635; animation: ripple 2s infinite linear; opacity: 0; pointer-events: none; }
+        @keyframes ripple { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+        .mentor-orb:hover { transform: scale(1.1); }
+        .mentor-orb.active { background: #0A0A0A; border: 1px solid #A3E635; box-shadow: 0 0 15px 0 rgba(163, 230, 53, 0.5); }
+        .mentor-orb.active::before { display: none; }
+        .mentor-orb-icon { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #0A0A0A; transition: all 0.3s ease; }
+        .mentor-orb.active .mentor-orb-icon { color: #A3E635; transform: rotate(90deg); }
+        
+        .chat-modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.3); backdrop-filter: blur(5px); z-index: 990; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .chat-modal-backdrop.visible { opacity: 1; visibility: visible; }
+        .chat-modal { position: fixed; bottom: 80px; right: 20px; width: calc(100vw - 40px); max-width: 400px; height: 60vh; max-height: 500px; background-color: rgba(30, 30, 30, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; display: flex; flex-direction: column; overflow: hidden; z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .chat-modal.visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .chat-header { padding: 1.25rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; }
+        .chat-body { flex-grow: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .chat-message { display: flex; flex-direction: column; max-width: 85%; padding: 0.75rem 1rem; border-radius: 1rem; line-height: 1.5; }
+        .chat-message.user { background-color: #A3E635; color: #0A0A0A; border-bottom-right-radius: 0.25rem; align-self: flex-end; font-weight: 500; }
+        .chat-message.model { background-color: rgba(255, 255, 255, 0.1); color: #EAEAEA; border-bottom-left-radius: 0.25rem; align-self: flex-start; }
+        .chat-message.model.loading { display: flex; gap: 4px; }
+        .chat-message.model.loading div { width: 8px; height: 8px; border-radius: 50%; background-color: #EAEAEA; animation: bounce 1s infinite; }
+        .chat-message.model.loading div:nth-child(2) { animation-delay: 0.2s; }
+        .chat-message.model.loading div:nth-child(3) { animation-delay: 0.4s; }
+        .chat-footer { padding: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; }
+        .chat-input-wrapper { display: flex; align-items: center; gap: 0.5rem; background-color: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding-left: 1rem; }
+        .chat-input { flex-grow: 1; background: transparent; border: none; outline: none; color: #EAEAEA; padding: 0.75rem 0; }
+        .chat-send-btn { background: #A3E635; color: #0A0A0A; border: none; border-radius: 0.5rem; width: 36px; height: 36px; margin: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
+        
+        /* Loading Overlay & Toasts */
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 10, 10, 0.8); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        #loading-overlay.visible { opacity: 1; visibility: visible; }
+        .spinner { width: 48px; height: 48px; border: 4px solid rgba(255, 255, 255, 0.2); border-left-color: #A3E635; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 0.75rem 1.5rem; background-color: #A3E635; color: #0A0A0A; font-weight: 600; border-radius: 99px; box-shadow: 0 4px 20px rgba(163, 230, 53, 0.5); z-index: 10000; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        .toast.show { bottom: 20px; }
+        .toast.error { background-color: #DC2626; color: #FAFAFA; box-shadow: 0 4px 20px rgba(220, 38, 38, 0.5); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Background Glows -->
+    <div class="aurora-bg">
+        <div class="aurora-glow aurora-1"></div>
+        <div class="aurora-glow aurora-2"></div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="text-white text-lg font-semibold mt-6" id="loading-text">Generating your path...</p>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="toast"></div>
+
+    <!-- Header -->
+    <header class="relative z-30 transition-all duration-300" id="main-header">
+        <div class="container mx-auto px-6 py-6 transition-all duration-300" id="header-container">
+            <div class="glass-card flex items-center justify-between p-4 rounded-xl border-white/5 bg-black/40">
+                <a href="index.html" class="text-2xl font-bold text-white tracking-tight">Eduvo <span class="text-lime-400">AI</span></a>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center gap-8"> 
+                    <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors" title="Your Dashboard">Dashboard</a>
+                    <a href="personalize.html" class="text-gray-300 hover:text-white transition-colors" title="Start a new roadmap">Generate</a>
+                    <a href="cv-matcher-test.html" class="text-gray-300 hover:text-white transition-colors">CV Match</a>
+                    <a href="projects.html" class="text-gray-300 hover:text-white transition-colors">Forge</a>
+                    <a href="#ecosystem" class="text-gray-300 hover:text-white transition-colors">How It Works</a>
+                </nav>
+                
+                <div class="flex items-center gap-4">
+                     <a href="profile.html" id="header-profile-link" class="profile-icon hidden" title="Your Profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A1.875 1.875 0 0118 22.5H6.002c-.997 0-1.808-.8-1.808-1.875z" />
+                        </svg>
+                    </a>
+                    <a href="signin.html?redirect=dashboard.html" id="header-signin-link" class="btn-new hidden md:flex !py-2 !px-5">
+                        <span>Sign In</span>
+                    </a>
+                    <!-- Mobile Hamburger Button -->
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2 focus:outline-none z-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="flex justify-between items-center p-6 border-b border-white/10">
+            <a href="index.html" class="text-2xl font-bold text-white tracking-tight">Eduvo <span class="text-lime-400">AI</span></a>
+            <button id="close-menu-btn" class="text-gray-400 hover:text-white p-2 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <nav class="flex flex-col items-center justify-center flex-grow gap-8 text-xl">
+            <a href="dashboard.html" class="mobile-link text-gray-300 hover:text-white transition-colors">Dashboard</a>
+            <a href="personalize.html" class="mobile-link text-gray-300 hover:text-white transition-colors">Generate Path</a>
+            <a href="cv-matcher-test.html" class="mobile-link text-gray-300 hover:text-white transition-colors">CV Match Pro</a>
+            <a href="projects.html" class="mobile-link text-gray-300 hover:text-white transition-colors">Eduvo Forge</a>
+            <a href="#ecosystem" class="mobile-link text-gray-300 hover:text-white transition-colors">How It Works</a>
+            <a href="signin.html?redirect=dashboard.html" id="mobile-signin-link" class="btn-new hidden !py-3 !px-8 mt-4">Sign In</a>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative h-[85vh] min-h-[650px] flex items-center justify-center text-center overflow-hidden">
+        <div id="hero-canvas-container" class="absolute top-0 left-0 w-full h-full z-10">
+             <canvas id="hero-canvas"></canvas>
+        </div>
+        
+        <div class="relative z-20 container mx-auto px-6 flex flex-col items-center mt-[-5vh]">
+            <div class="inline-block bg-lime-400/10 border border-lime-400/20 text-lime-400 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.2em] mb-8 shadow-[0_0_15px_rgba(163,230,53,0.2)]">
+                THE COMPLETE CAREER ECOSYSTEM
+            </div>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight max-w-5xl drop-shadow-2xl">
+                Learn. Build. <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500 relative inline-block">
+                    Get Hired.
+                    <span class="absolute inset-0 bg-lime-400 blur-3xl opacity-20 -z-10"></span>
+                </span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mt-6 font-light leading-relaxed">
+                Stop getting rejected by bots and escaping tutorial hell. Generate AI learning paths, code in our live engineering simulator, and optimize your resume to beat the ATS.
+            </p>
+            
+            <form id="hero-form" class="mt-10 w-full max-w-xl z-20 relative">
+                <div class="relative flex flex-col sm:flex-row gap-4">
+                    <input type="text" id="hero-goal-input" placeholder="Enter your dream job or skill (e.g., 'Become a Data Scientist')" class="w-full text-lg px-6 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/50 transition-all" required>
+                    <button type="submit" id="hero-submit-btn" class="btn-new sm:absolute sm:right-2 sm:top-1/2 sm:-translate-y-1/2">
+                        <span>Generate Path</span>
+                        <svg class="btn-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- CAPABILITIES BANNER -->
+    <section class="border-y border-white/5 bg-black/40 backdrop-blur-md py-8 relative z-20 shadow-2xl">
+        <div class="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/10">
+            <div class="fade-in flex flex-col items-center justify-center">
+                <svg class="w-10 h-10 text-lime-400 anim-sparkle icon-glow mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                <p class="text-sm text-gray-300 font-bold tracking-wide uppercase">Powered by Gemini</p>
+            </div>
+            <div class="fade-in flex flex-col items-center justify-center" style="transition-delay: 100ms;">
+                <svg class="w-10 h-10 text-lime-400 anim-flash icon-glow mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <p class="text-sm text-gray-300 font-bold tracking-wide uppercase">Real-time IDE</p>
+            </div>
+            <div class="fade-in flex flex-col items-center justify-center" style="transition-delay: 200ms;">
+                <div class="anim-scan-container w-10 h-10 mb-3">
+                    <div class="anim-scan-line"></div>
+                    <svg class="w-10 h-10 text-lime-400 icon-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <p class="text-sm text-gray-300 font-bold tracking-wide uppercase">Strict ATS Parsing</p>
+            </div>
+            <div class="fade-in flex flex-col items-center justify-center" style="transition-delay: 300ms;">
+                <svg class="w-10 h-10 text-lime-400 anim-float icon-glow mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                <p class="text-sm text-gray-300 font-bold tracking-wide uppercase">100% Free Access</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Logo Ticker -->
+    <section class="logo-ticker">
+        <div class="logo-ticker-content">
+            <span class="ticker-item">Coursera</span><span class="ticker-item">Udemy</span><span class="ticker-item">Google</span><span class="ticker-item">Microsoft</span><span class="ticker-item">edX</span><span class="ticker-item">AWS</span><span class="ticker-item">DataCamp</span><span class="ticker-item">Meta</span><span class="ticker-item">IBM</span>
+            <span class="ticker-item">Coursera</span><span class="ticker-item">Udemy</span><span class="ticker-item">Google</span><span class="ticker-item">Microsoft</span><span class="ticker-item">edX</span><span class="ticker-item">AWS</span><span class="ticker-item">DataCamp</span><span class="ticker-item">Meta</span><span class="ticker-item">IBM</span>
+        </div>
+    </section>
+    
+    <!-- Main Content Area -->
+    <main class="relative z-10 container mx-auto px-6 py-24 md:py-32 space-y-32">
+        
+        <!-- NEW BENTO GRID: The Ecosystem -->
+        <section id="ecosystem" class="space-y-12">
+            <div class="max-w-2xl text-center mx-auto fade-in">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white">
+                    Everything you need in <span class="text-lime-400">one platform.</span>
+                </h2>
+                <p class="text-lg md:text-xl text-gray-300 mt-6">
+                    We replaced scattered tutorials and expensive resume writers with an integrated, AI-powered ecosystem.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+                <!-- 1. Eduvo Forge -->
+                <div class="bento-card md:col-span-6 lg:col-span-4 fade-in min-h-[400px] group !p-0">
+                    <div class="bento-content-wrapper z-10 relative flex flex-col md:flex-row h-full p-8 pb-0 md:pb-8">
+                        <div class="w-full md:w-3/5 pr-0 md:pr-4 flex flex-col items-start justify-center pb-8 md:pb-0">
+                            <span class="inline-block bg-lime-400/20 text-lime-300 text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-widest border border-lime-400/30">The Simulator</span>
+                            <h3 class="text-3xl font-black text-white mb-4">Eduvo Forge</h3>
+                            <p class="text-gray-300 text-lg mb-8 leading-relaxed">Escape tutorial hell. Grab real-world engineering tickets, write code in our live multi-file IDE, and get your PRs instantly graded by an AI Senior Developer.</p>
+                            <a href="projects.html" class="btn-new shadow-none">Start Coding &rarr;</a>
+                        </div>
+                        <div class="w-full md:w-2/5 mt-auto md:mt-0 relative flex items-end md:items-center justify-end">
+                             <div class="w-full bg-[#121212]/90 backdrop-blur-xl rounded-t-2xl md:rounded-2xl border-t border-l border-r md:border border-white/10 p-5 font-mono text-sm shadow-2xl opacity-90 transition-opacity group-hover:opacity-100">
+                                <div class="flex gap-2 mb-4">
+                                    <span class="w-3 h-3 rounded-full bg-red-500"></span><span class="w-3 h-3 rounded-full bg-yellow-500"></span><span class="w-3 h-3 rounded-full bg-green-500"></span>
+                                </div>
+                                <p class="text-gray-400"><span class="text-purple-400">async function</span> <span class="text-blue-400">submitPR</span>() {</p>
+                                <p class="ml-4 text-gray-400"><span class="text-purple-400">await</span> aiReviewer.analyze(code);</p>
+                                <p class="ml-4 text-lime-400 mt-2 typewriter-line">// PR Approved! 70/100</p>
+                                <p class="text-gray-400 mt-2">}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. AI Roadmaps -->
+                <div class="bento-card md:col-span-3 lg:col-span-2 fade-in group" style="transition-delay: 100ms;">
+                    <div class="bento-content-wrapper">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30 mb-6 relative">
+                            <span class="text-2xl z-10 relative">🗺️</span>
+                            <div class="pulse-ring border-blue-400"></div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">AI Roadmaps</h3>
+                        <p class="text-gray-400 leading-relaxed mb-6">Generate custom, step-by-step learning paths tailored to your dream job, exact budget, and weekly schedule.</p>
+                        <a href="personalize.html" class="text-blue-400 font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-2">Plan your path &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- 3. CV Matcher -->
+                <div class="bento-card md:col-span-3 lg:col-span-2 fade-in group" style="transition-delay: 200ms;">
+                    <div class="bento-content-wrapper">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30 mb-6 relative scanner-box">
+                            <span class="text-2xl z-10 relative">📄</span>
+                            <div class="scanner-line"></div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">CV Matcher Pro</h3>
+                        <p class="text-gray-400 leading-relaxed mb-6">Beat the ATS. Analyze your PDF resume against any Job Description to uncover missing skills and get custom interview prep.</p>
+                        <a href="cv-matcher-test.html" class="text-purple-400 font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-2">Scan Resume &rarr;</a>
+                    </div>
+                </div>
+                
+                <!-- 4. Gamification -->
+                <div class="bento-card md:col-span-3 lg:col-span-2 fade-in bg-gradient-to-br from-gray-900 to-black group" style="transition-delay: 300ms;">
+                    <div class="bento-content-wrapper w-full">
+                        <h3 class="text-xl font-bold text-white mb-6">Rank Up Your Career</h3>
+                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/10 group-hover:bg-white/10 transition-colors w-full">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-lime-400 to-green-600 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(163,230,53,0.4)]">👑</div>
+                            <div>
+                                <h4 class="text-white font-bold">Principal Eng.</h4>
+                                <p class="text-lime-400 font-mono text-xs mt-1">12,500 XP | 14d Streak</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Testimonial -->
+                <div class="bento-card md:col-span-3 lg:col-span-2 fade-in" style="transition-delay: 400ms;">
+                    <div class="bento-content-wrapper flex flex-col h-full">
+                        <div class="flex gap-1 text-lime-400 mb-4 text-sm">★★★★★</div>
+                        <p class="italic text-gray-300 mb-6 leading-relaxed flex-grow">"Eduvo's Forge gave me the real-world practice I couldn't find in tutorials. The CV Matcher helped me tailor my resume, and I just landed my first role!"</p>
+                        <div class="flex items-center gap-3">
+                            <img src="https://placehold.co/40x40/A3E635/0A0A0A?text=SJ" alt="Sarah J." class="w-10 h-10 rounded-full border border-lime-400">
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Sarah Johnson</h4>
+                                <p class="text-xs text-gray-500">Hired via Eduvo AI</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="container mx-auto fade-in">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">
+                        Built by <span class="text-lime-400">Learners</span>, for Learners
+                    </h2>
+                    <p class="text-gray-300 mt-4 max-w-2xl mx-auto leading-relaxed">
+                        We aren't a faceless corporation. We are developers who were once lost in the maze of online courses and ATS rejections. We built Eduvo AI to be the ultimate guide we wish we had.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass-card p-8 border-t-4 border-t-lime-400 flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-300 shadow-xl">
+                        <div class="mb-4 text-lime-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">The Problem</h3>
+                        <p class="text-gray-400 leading-relaxed flex-grow">Information overload is real. Students spend more time <em>searching</em> for the "perfect" course than actually gaining real-world experience.</p>
+                    </div>
+                    <div class="glass-card p-8 border-t-4 border-t-blue-400 flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-300 shadow-xl">
+                        <div class="mb-4 text-blue-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">How AI Helps</h3>
+                        <p class="text-gray-400 leading-relaxed flex-grow">We don't rely on generic lists. We use Google's Gemini AI to grade your code, parse your resumes, and construct curriculum that fits <em>you</em>.</p>
+                    </div>
+                    <div class="glass-card p-8 border-t-4 border-t-purple-400 flex flex-col h-full hover:translate-y-[-5px] transition-transform duration-300 shadow-xl">
+                        <div class="mb-4 text-purple-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Our Mission</h3>
+                        <p class="text-gray-400 leading-relaxed flex-grow">To democratize career guidance. High-quality mentorship, resume reviews, and code assessments shouldn't be reserved for the wealthy.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="max-w-3xl mx-auto space-y-12">
+            <div class="text-center fade-in">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white">Have Questions?</h2>
+                <p class="text-lg md:text-xl text-gray-300 mt-6">We have answers. Here is how the Eduvo ecosystem works.</p>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="glass-card p-6 faq-item fade-in hover:border-lime-400/50 transition-colors">
+                    <details>
+                        <summary class="text-xl font-bold text-white">What is Eduvo Forge?<span class="faq-icon text-lime-400 text-3xl font-light">+</span></summary>
+                        <p class="text-gray-300 mt-4 text-base leading-relaxed">Eduvo Forge is our live engineering simulator. Instead of watching tutorials, you generate real-world software "tickets" (tasks), write the code in our integrated browser IDE, and submit it for an instant Pull Request review by our AI Senior Developer. Passing reviews earns you XP and builds your rank.</p>
+                    </details>
+                </div>
+                <div class="glass-card p-6 faq-item fade-in hover:border-lime-400/50 transition-colors" style="transition-delay: 100ms;">
+                    <details>
+                        <summary class="text-xl font-bold text-white">How does CV Matcher Pro work?<span class="faq-icon text-lime-400 text-3xl font-light">+</span></summary>
+                        <p class="text-gray-300 mt-4 text-base leading-relaxed">Simply paste a Job Description and upload your PDF resume. Our AI acts like a strict Applicant Tracking System (ATS), parsing your document to find missing skills, generating a match probability score, and giving you specific tips to update your resume before you apply.</p>
+                    </details>
+                </div>
+                <div class="glass-card p-6 faq-item fade-in hover:border-lime-400/50 transition-colors" style="transition-delay: 200ms;">
+                    <details>
+                        <summary class="text-xl font-bold text-white">How does the AI create my roadmap?<span class="faq-icon text-lime-400 text-3xl font-light">+</span></summary>
+                        <p class="text-gray-300 mt-4 text-base leading-relaxed">Our AI acts as an expert career counselor. It analyzes your career goal against a vast database of skills, current courses, and job requirements to build a logical, step-by-step learning path customized to your exact budget and weekly schedule.</p>
+                    </details>
+                </div>
+                <div class="glass-card p-6 faq-item fade-in hover:border-lime-400/50 transition-colors" style="transition-delay: 300ms;">
+                    <details>
+                        <summary class="text-xl font-bold text-white">Is this website completely free?<span class="faq-icon text-lime-400 text-3xl font-light">+</span></summary>
+                        <p class="text-gray-300 mt-4 text-base leading-relaxed">Yes, 100% free for you! We earn a small commission from our partners (like Coursera or Udemy) *only* if you choose to purchase a premium course through one of our roadmap links. This lets us keep the heavy AI processing in the Forge and CV Matcher completely free for students.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Premium CTA Section - Fixed Layout -->
+        <section class="max-w-4xl mx-auto text-center fade-in cta-bg p-10 md:p-16 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+            <!-- Subtle Inner Glow -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-lime-400/20 blur-[80px] pointer-events-none"></div>
+            
+            <div class="relative z-10">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
+                    Ready to find <span class="text-lime-400">your</span> path?
+                </h2>
+                <p class="text-lg md:text-xl text-gray-300 mt-4 mb-10 px-4">
+                    Join thousands of students who are learning, building, and getting hired with Eduvo AI.
+                </p>
+                <form id="footer-form" class="mt-8 px-2 md:px-8">
+                    <div class="relative flex flex-col sm:flex-row items-center gap-3 max-w-xl mx-auto bg-black/60 p-2 sm:p-2 rounded-3xl sm:rounded-full border border-white/10 shadow-inner backdrop-blur-xl focus-within:border-lime-400/50 transition-colors z-10">
+                        <input type="text" id="footer-goal-input" placeholder="What do you want to build today?" class="w-full text-base px-6 py-3 bg-transparent text-white placeholder-gray-500 focus:outline-none" required>
+                        <button type="submit" id="footer-submit-btn" class="btn-new !py-3 !px-8 shrink-0 w-full sm:w-auto rounded-xl sm:rounded-full m-1 sm:m-0">
+                            <span>Get Started Free</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer class="container mx-auto px-6 py-12 border-t border-white/10 text-center text-gray-400">
+        <p>&copy; 2026 Eduvo AI. All rights reserved.</p>
+        <div class="flex flex-wrap justify-center gap-6 md:gap-8 text-sm font-medium mt-4 mb-6">
+            <a href="legal.html#privacy" class="hover:text-lime-400 transition-colors">Privacy Policy</a>
+            <a href="legal.html#terms" class="hover:text-lime-400 transition-colors">Terms of Use</a>
+            <a href="mailto:company@eduvoai.com" class="hover:text-lime-400 transition-colors">Contact / Feedback: company@eduvoai.com</a>
+        </div>
+        <div class="flex justify-center gap-6 mt-4 mb-2">
+            <a href="https://www.linkedin.com/company/eduvo-ai" target="_blank" rel="noopener noreferrer" class="hover:text-lime-400 transition-colors" aria-label="LinkedIn">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg>
+            </a>
+            <a href="https://www.instagram.com/eduvoai/" target="_blank" rel="noopener noreferrer" class="hover:text-lime-400 transition-colors" aria-label="Instagram">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465 1.067-.047 1.407-.06 4.123-.06h.08zm4.123 5.32c-1.227 0-2.223.996-2.223 2.223s.996 2.223 2.223 2.223 2.223-.996 2.223-2.223-.996-2.223-2.223-2.223zm-4.123 3.08a3.603 3.603 0 01-3.603 3.603 3.603 3.603 0 01-3.603-3.603 3.603 3.603 0 013.603-3.603 3.603 3.603 0 013.603 3.603zm-3.603 1.716a1.887 1.887 0 001.887-1.887 1.887 1.887 0 00-1.887-1.887 1.887 1.887 0 00-1.887 1.887 1.887 1.887 0 001.887 1.887z" clip-rule="evenodd"></path></svg>
+            </a>
+        </div>
+    </footer>
+
+    <!-- AI Mentor Orb -->
+    <div id="mentor-orb" class="mentor-orb" title="Chat with AI Mentor">
+        <div class="mentor-orb-icon" id="mentor-orb-icon">
+            <svg id="orb-icon-chat" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <svg id="orb-icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div id="chat-backdrop" class="chat-modal-backdrop"></div>
+    <div id="chat-modal" class="chat-modal">
+        <div class="chat-header">
+            <h3 class="text-lg font-bold text-white">Eduvo AI Mentor</h3>
+            <p class="text-sm text-lime-400">Online</p>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-message model">
+                Welcome to Eduvo AI! I can help you plan your career, review your resume, or find your first task in the Forge. What do you need help with today?
+            </div>
+        </div>
+        <div class="chat-footer">
+            <form id="chat-form" class="chat-input-wrapper">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Ask a question..." autocomplete="off">
+                <button type="submit" id="chat-send-btn" class="chat-send-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously,
+            signInWithCustomToken,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3euFCtckrdkhxcwQw28PWooUoOycTSdU",
+            authDomain: "pathfinder-ai-87d22.firebaseapp.com",
+            projectId: "pathfinder-ai-87d22",
+            storageBucket: "pathfinder-ai-87d22.firebasestorage.app",
+            messagingSenderId: "254163992794",
+            appId: "1:254163992794:web:d34104f34142acac5be5e3",
+            measurementId: "G-ECJB4EMM1X"
+        };
+        
+        let app, auth;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            setLogLevel('Debug');
+        } catch (error) {
+            console.error("Error initializing Firebase:", error);
+            showToast("Error connecting to Firebase. Check your API keys.", true);
+        }
+
+        const headerProfileLink = document.getElementById('header-profile-link');
+        const headerSigninLink = document.getElementById('header-signin-link');
+        const mobileSigninLink = document.getElementById('mobile-signin-link');
+        const heroForm = document.getElementById('hero-form');
+        const heroGoalInput = document.getElementById('hero-goal-input');
+        const heroSubmitBtn = document.getElementById('hero-submit-btn');
+        const footerForm = document.getElementById('footer-form');
+        const footerGoalInput = document.getElementById('footer-goal-input');
+        const footerSubmitBtn = document.getElementById('footer-submit-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        const mainHeader = document.getElementById('main-header');
+        const headerContainer = document.getElementById('header-container');
+
+        // Mobile Menu Elements
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            initHeroAnimation();
+            initScrollAnimations();
+            initChatModal();
+            initBentoInteractions();
+
+            // Mobile Menu Toggle Logic
+            function toggleMobileMenu() {
+                const isMenuOpen = mobileMenu.classList.contains('opacity-100');
+                if (isMenuOpen) {
+                    mobileMenu.classList.remove('opacity-100', 'pointer-events-auto');
+                    mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+                    document.body.style.overflow = '';
+                } else {
+                    mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+                    mobileMenu.classList.add('opacity-100', 'pointer-events-auto');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            closeMenuBtn.addEventListener('click', toggleMobileMenu);
+            mobileLinks.forEach(link => link.addEventListener('click', toggleMobileMenu));
+
+            // Header glassmorphism on scroll
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    headerContainer.classList.remove('py-6');
+                    headerContainer.classList.add('py-3');
+                } else {
+                    headerContainer.classList.add('py-6');
+                    headerContainer.classList.remove('py-3');
+                }
+            });
+
+            if (auth) {
+                // FIXED: Wait for Firebase to read IndexedDB before creating anonymous sessions!
+                auth.authStateReady().then(async () => {
+                    if (!auth.currentUser) {
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Initial auth fallback failed:", error);
+                        }
+                    }
+                });
+
+                // Safe listener for UI updates (No more flashing or random signouts)
+                onAuthStateChanged(auth, (user) => {
+                    if (user && !user.isAnonymous) {
+                        headerProfileLink.classList.remove('hidden');
+                        headerSigninLink.classList.remove('md:flex');
+                        headerSigninLink.classList.add('hidden');
+                        mobileSigninLink.classList.add('hidden');
+                    } else {
+                        headerProfileLink.classList.add('hidden');
+                        headerSigninLink.classList.add('md:flex');
+                        headerSigninLink.classList.remove('hidden');
+                        mobileSigninLink.classList.remove('hidden');
+                    }
+                });
+            }
+            
+            heroForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const goal = heroGoalInput.value.trim();
+                if (goal) {
+                    if (!auth.currentUser || auth.currentUser.isAnonymous) {
+                        showToast("Please sign in to build your roadmap.", true);
+                        sessionStorage.setItem('pendingGoal', goal);
+                        setTimeout(() => window.location.href = 'signin.html?redirect=personalize.html', 1500);
+                        return;
+                    }
+                    handleGenerateRoadmap(goal, heroSubmitBtn, "Generate Path");
+                } else {
+                    showToast("Please enter a goal first.", true);
+                }
+            });
+            
+            footerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const goal = footerGoalInput.value.trim();
+                if (goal) {
+                    if (!auth.currentUser || auth.currentUser.isAnonymous) {
+                        showToast("Please sign in to build your roadmap.", true);
+                        sessionStorage.setItem('pendingGoal', goal);
+                        setTimeout(() => window.location.href = 'signin.html?redirect=personalize.html', 1500);
+                        return;
+                    }
+                    handleGenerateRoadmap(goal, footerSubmitBtn, "Get Started Free");
+                } else {
+                    showToast("Please enter a goal first.", true);
+                }
+            });
+        });
+
+        // --- Live Bento Card Interactions ---
+        function initBentoInteractions() {
+            document.querySelectorAll('.bento-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -4; 
+                    const rotateY = ((x - centerX) / centerX) * 4;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                });
+            });
+        }
+
+        // --- 3D Hero Animation Logic (Tiles + Starfield) ---
+        function initHeroAnimation() {
+            let scene, camera, renderer, mouse, raycaster;
+            const tiles = [];
+            let particlesMesh;
+            const container = document.getElementById('hero-canvas-container');
+            const canvas = document.getElementById('hero-canvas');
+            
+            if (!container || !canvas) return;
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 15;
+            
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            
+            mouse = new THREE.Vector2();
+            raycaster = new THREE.Raycaster();
+            
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 800; 
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 60; 
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.08,
+                color: 0xA3E635, 
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            const courseNames = ['Coursera', 'Google', 'Udemy', 'Microsoft', 'AWS', 'edX', 'DataCamp', 'LinkedIn'];
+            const textures = courseNames.map(name => createTextTexture(name));
+            
+            function createTextTexture(text) {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = 256; canvas.height = 128;
+                
+                context.fillStyle = 'rgba(30, 30, 30, 0.8)';
+                context.fillRect(0, 0, 256, 128);
+                
+                context.strokeStyle = '#A3E635';
+                context.lineWidth = 10;
+                context.strokeRect(0, 0, 256, 128);
+
+                context.fillStyle = '#EAEAEA';
+                context.font = 'bold 32px Inter';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(text, 128, 64);
+                
+                return new THREE.CanvasTexture(canvas);
+            }
+            
+            const geometry = new THREE.BoxGeometry(4, 2, 0.2);
+            for (let i = 0; i < 8; i++) {
+                const material = new THREE.MeshBasicMaterial({ map: textures[i] });
+                const tile = new THREE.Mesh(geometry, material);
+                
+                tile.position.set((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 10);
+                tile.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+                tile.userData.speed = { x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.003, z: (Math.random() - 0.5) * 0.003, float: (Math.random() - 0.5) * 0.005 };
+                
+                scene.add(tile);
+                tiles.push(tile);
+            }
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+            
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                camera.position.x += (mouse.x * 5 - camera.position.x) * 0.05;
+                camera.position.y += (-mouse.y * 5 - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+                
+                tiles.forEach(tile => {
+                    tile.rotation.x += tile.userData.speed.x;
+                    tile.rotation.y += tile.userData.speed.y;
+                    tile.rotation.z += tile.userData.speed.z;
+                    tile.position.y += tile.userData.speed.float;
+                    if (tile.position.y > 10 || tile.position.y < -10) tile.userData.speed.float *= -1;
+                });
+                
+                particlesMesh.rotation.y += 0.0005;
+                particlesMesh.rotation.x += 0.0002;
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        }
+        
+        // --- Roadmap Generation ---
+        const API_KEY = "AIzaSyA_wj1Ql_IaavQNfLPGYBNHjn4n9JiarzE"; // Canvas runtime injects key here
+        const ROADMAP_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`
+        
+        const ROADMAP_SYSTEM_INSTRUCTION = {
+            parts: [{ text: "You are an expert AI Career Mentor. The user will give you a career goal. Your task is to generate a concise, actionable, step-by-step learning roadmap. You MUST return ONLY a JSON object. Do not include any text before or after the JSON. The JSON object must follow this exact schema: \n{\n  \"title\": \"Roadmap: [User's Goal]\",\n  \"sourceGoal\": \"[User's Goal]\",\n  \"steps\": [\n    {\n      \"title\": \"Step 1: [Step Title]\",\n      \"description\": \"[Brief 1-2 sentence description of this step]\",\n      \"courses\": [\n        {\n          \"name\": \"[Course Name 1]\",\n          \"platform\": \"[e.g., Coursera, Udemy, Google, etc.]\"\n        },\n        {\n          \"name\": \"[Course Name 2]\",\n          \"platform\": \"[e.g., edX, Microsoft Learn, etc.]\"\n        }\n      ]\n    },\n    {\n      \"title\": \"Step 2: [Step Title]\",\n      \"description\": \"[Description]\",\n      \"courses\": [\n        {\n          \"name\": \"[Course Name 1]\",\n          \"platform\": \"[Platform]\"\n        }\n      ]\n    }\n  ]\n}\nGenerate 3-5 steps." }]
+        };
+
+        async function handleGenerateRoadmap(goal, button, defaultText) {
+            setLoading(button, true, "Generating...");
+            loadingOverlay.classList.add('visible');
+            
+            const loadingMessages = [
+                `Building roadmap for "${goal}"...`,
+                "Analyzing industry requirements...",
+                "Finding the best courses...",
+                "Structuring your path...",
+                "Finalizing details..."
+            ];
+            let msgIndex = 0;
+            loadingText.textContent = loadingMessages[0];
+            const loadingInterval = setInterval(() => {
+                msgIndex = (msgIndex + 1) % loadingMessages.length;
+                loadingText.textContent = loadingMessages[msgIndex];
+            }, 2000);
+
+            const payload = {
+                contents: [{ parts: [{ text: goal }] }],
+                systemInstruction: ROADMAP_SYSTEM_INSTRUCTION,
+                generationConfig: { responseMimeType: "application/json" }
+            };
+            
+            try {
+                let response; let retries = 0; const maxRetries = 3; let delay = 1000;
+                
+                while (retries < maxRetries) {
+                    response = await fetch(ROADMAP_API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (response.ok) break;
+                    if (response.status === 429 || response.status >= 500) {
+                        retries++; 
+                        if(retries >= maxRetries) break;
+                        await new Promise(resolve => setTimeout(resolve, delay)); 
+                        delay *= 2;
+                    } else { throw new Error(`API Error: ${response.status}`); }
+                }
+                
+                if (!response.ok) throw new Error(`Failed after ${maxRetries} retries.`);
+                
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+                
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    sessionStorage.setItem('newRoadmap', candidate.content.parts[0].text);
+                    clearInterval(loadingInterval);
+                    loadingText.textContent = "Redirecting to your roadmap...";
+                    window.location.href = 'results.html';
+                } else { throw new Error('Invalid response structure.'); }
+                
+            } catch (error) {
+                clearInterval(loadingInterval);
+                console.error("API Error:", error);
+                showToast("Error generating roadmap. Please try again later.", true);
+                setLoading(button, false, defaultText);
+                loadingOverlay.classList.remove('visible');
+            }
+        }
+        
+        function setLoading(button, isLoading, text) {
+            button.disabled = isLoading;
+            const span = button.querySelector('span');
+            if (span) span.textContent = text; else button.textContent = text;
+        }
+
+        // --- Chat Modal Logic ---
+        function initChatModal() {
+            const mentorOrb = document.getElementById('mentor-orb'); const chatModal = document.getElementById('chat-modal');
+            const chatBackdrop = document.getElementById('chat-backdrop'); const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input'); const chatSendBtn = document.getElementById('chat-send-btn');
+            const chatBody = document.getElementById('chat-body'); const orbIconChat = document.getElementById('orb-icon-chat');
+            const orbIconClose = document.getElementById('orb-icon-close');
+
+            const toggleChat = () => {
+                if (chatModal.classList.contains('visible')) {
+                    mentorOrb.classList.remove('active'); chatModal.classList.remove('visible'); chatBackdrop.classList.remove('visible');
+                    orbIconChat.classList.remove('hidden'); orbIconClose.classList.add('hidden');
+                } else {
+                    mentorOrb.classList.add('active'); chatModal.classList.add('visible'); chatBackdrop.classList.add('visible');
+                    orbIconChat.classList.add('hidden'); orbIconClose.classList.remove('hidden'); chatInput.focus();
+                }
+            };
+            mentorOrb.addEventListener('click', toggleChat); chatBackdrop.addEventListener('click', toggleChat);
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault(); const message = chatInput.value.trim();
+                if (message) { addMessageToChat('user', message); chatInput.value = ''; getGeminiChatResponse(message); }
+            });
+
+            const addMessageToChat = (role, text) => {
+                const loadingMessage = document.getElementById('loading-message'); if (loadingMessage) loadingMessage.remove();
+                const messageElement = document.createElement('div'); messageElement.classList.add('chat-message', role);
+                
+                if (text === 'loading') {
+                    messageElement.id = 'loading-message'; messageElement.classList.add('loading');
+                    messageElement.innerHTML = '<div></div><div></div><div></div>';
+                } else { 
+                    messageElement.innerHTML = text.replace(/\n/g, '<br>'); 
+                }
+                chatBody.appendChild(messageElement); chatBody.scrollTop = chatBody.scrollHeight;
+            };
+
+            const CHAT_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`;
+            const CHAT_SYSTEM_INSTRUCTION = { 
+                parts: [{ 
+                    text: "You are 'Eduvo Mentor', the official AI guide for Eduvo AI. You help users navigate our three main features: 1. AI Roadmaps (personalized career learning paths based on budget/time). 2. Eduvo Forge (a live engineering simulator where users solve real-world tickets, write code in our IDE, and get graded by an AI Senior Dev to earn XP). 3. CV Matcher Pro (analyzes PDF resumes against Job Descriptions to beat the ATS). Be concise, encouraging, and highly conversational. Do NOT use markdown formatting like asterisks or hashtags. Keep paragraphs very short. If they ask how to start coding, point them to Eduvo Forge. If they ask about resumes, point them to CV Match. If they ask about learning, point them to Generate Roadmap." 
+                }] 
+            };
+
+            const getGeminiChatResponse = async (userQuery) => {
+                chatSendBtn.disabled = true; addMessageToChat('model', 'loading');
+                
+                const payload = { 
+                    contents: [{ parts: [{ text: userQuery }] }], 
+                    systemInstruction: CHAT_SYSTEM_INSTRUCTION
+                };
+
+                try {
+                    let response; let retries = 0; const maxRetries = 3; let delay = 1000;
+                    while (retries < maxRetries) {
+                        response = await fetch(CHAT_API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        if (response.ok) break;
+                        if (response.status === 429 || response.status >= 500) { 
+                            retries++; 
+                            if(retries >= maxRetries) break;
+                            await new Promise(resolve => setTimeout(resolve, delay)); 
+                            delay *= 2; 
+                        } 
+                        else { throw new Error(`API Error: ${response.status}`); }
+                    }
+                    if (!response.ok) throw new Error(`Failed after ${maxRetries} retries.`);
+                    const result = await response.json(); const candidate = result.candidates?.[0];
+                    if (candidate && candidate.content?.parts?.[0]?.text) addMessageToChat('model', candidate.content.parts[0].text);
+                    else addMessageToChat('model', 'Sorry, I had trouble generating a response. Please try again.');
+                } catch (error) { 
+                    console.error("API Error:", error); 
+                    addMessageToChat('model', `Sorry, I couldn't connect to the server. (${error.message})`); 
+                } 
+                finally { chatSendBtn.disabled = false; chatInput.focus(); }
+            };
+        }
+        
+        let toastTimer;
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-notification'); if (!toast) return;
+            toast.textContent = message; toast.className = 'toast show';
+            if (isError) toast.classList.add('error'); else toast.classList.remove('error');
+            clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+    
+    <!-- Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+    <script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js" charset="UTF-8"></script>
+    <script type="text/javascript" charset="UTF-8">
+        document.addEventListener('DOMContentLoaded', function () {
+            cookieconsent.run({"notice_banner_type":"simple","consent_type":"express","palette":"dark","language":"en","page_load_consent_levels":["strictly-necessary"],"notice_banner_reject_button_hide":false,"preferences_center_close_button_hide":false,"page_refresh_confirmation_buttons":false,"website_name":"EduvoAI"});
+        });
+    </script>
+
+    <noscript>Free cookie consent management tool by <a href="https://www.termsfeed.com/">TermsFeed</a></noscript>
+</body>
+</html>
