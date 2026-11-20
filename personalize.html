@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta name='impact-site-verification' value='5c27657f-deb8-40cb-b380-8bab37136a89'>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Your Path - Eduvo AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECJB4EMM1X"></script>
+     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ECJB4EMM1X');
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0A;
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- Aurora Background --- */
+        .aurora-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -10; overflow: hidden;
+        }
+        .aurora-glow {
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; will-change: transform;
+        }
+        .aurora-1 { width: 500px; height: 500px; background: #A3E635; top: 0%; left: 10%; animation: float 20s infinite linear -10s; }
+        .aurora-2 { width: 400px; height: 400px; background: #60A5FA; bottom: 10%; right: 20%; animation: float 20s infinite linear -5s; }
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(40px, 60px) rotate(20deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* --- Glass Card --- */
+        .glass-card {
+            background-color: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        /* --- Choice Card --- */
+        .choice-card {
+            background-color: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        .choice-card:hover {
+            border-color: #A3E635;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- Inputs & Selects --- */
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+        .form-input {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #EAEAEA;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #A3E635;
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.1);
+        }
+        /* Custom select arrow */
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+        }
+
+        select option {
+            background-color: #171717; /* Very dark grey/black */
+            color: #EAEAEA; /* White text */
+            padding: 12px;
+        }
+        
+        /* --- Buttons --- */
+        .btn-new {
+            width: 100%;
+            background-image: linear-gradient(to right, #a3e635, #bef264);
+            color: #172554;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .btn-new:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(163, 230, 53, 0.4); }
+        .btn-new:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* --- Loading & Spinner --- */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9998;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        #loading-overlay.visible { opacity: 1; visibility: visible; }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #A3E635;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* --- Profile Icon --- */
+        .profile-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(145deg, #A3E635, #60A5FA);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .profile-icon svg { width: 24px; height: 24px; color: #0A0A0A; }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="aurora-bg">
+        <div class="aurora-glow aurora-1"></div>
+        <div class="aurora-glow aurora-2"></div>
+    </div>
+    
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="text-white text-lg font-semibold mt-6" id="loading-text">Generating your custom path...</p>
+    </div>
+
+    <!-- Unified Top Bar (Fixed Active State) -->
+    <header class="relative z-30">
+        <div class="container mx-auto px-6 py-6">
+            <div class="glass-card flex items-center justify-between p-4 rounded-xl">
+                <a href="index.html" class="text-2xl font-bold text-white">Eduvo AI</a>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors font-medium">Dashboard</a>
+                    <a href="personalize.html" class="text-white font-bold border-b-2 border-lime-400 pb-1">Generate</a>
+                    <a href="cv-matcher-test.html" class="text-gray-300 hover:text-white transition-colors font-medium">CV Match</a>
+                    <a href="projects.html" class="text-gray-300 hover:text-white transition-colors font-medium">Forge</a>
+                    <a href="index.html#how-it-works" class="text-gray-300 hover:text-white transition-colors font-medium">How It Works</a>
+                    <a href="index.html#faq" class="text-gray-300 hover:text-white transition-colors font-medium">FAQs</a>
+                    <a href="index.html#about" class="text-gray-300 hover:text-white transition-colors font-medium">About Us</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <a href="profile.html" id="header-profile-link" class="profile-icon hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A1.875 1.875 0 0118 22.5H6.002c-.997 0-1.808-.8-1.808-1.875z" /></svg>
+                    </a>
+                    <a href="signin.html?redirect=personalize.html" id="header-signin-link" class="btn-new w-auto px-6 hidden">
+                        <span>Sign In</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 container mx-auto px-6 py-12">
+        
+        <div class="max-w-3xl mx-auto text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white">
+                Design Your <span class="text-lime-400">Career</span>
+            </h1>
+            <p class="text-lg text-gray-300 mt-4">
+                Tell us a little about yourself so our AI can build a roadmap that actually fits your life.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            
+            <a href="quiz.html" class="choice-card group">
+                <div>
+                    <div class="w-16 h-16 rounded-2xl bg-lime-400/20 flex items-center justify-center border border-lime-400/50 mb-6 group-hover:bg-lime-400/30 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                    <span class="inline-block bg-lime-400/20 text-lime-300 text-xs font-bold px-3 py-1 rounded-full mb-4">Beginner Friendly</span>
+                    <h2 class="text-3xl font-bold text-white mb-4">Take the Quiz</h2>
+                    <p class="text-gray-300 leading-relaxed">
+                        Not sure exactly what you want? Answer 5 simple questions to discover your ideal career path based on your personality.
+                    </p>
+                </div>
+                <div class="btn-new mt-8">
+                    <span>Start Guided Quiz</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </div>
+            </a>
+            
+            <div class="choice-card">
+                <form id="prompt-form" class="flex flex-col h-full justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-16 h-16 rounded-2xl bg-lime-400/20 flex items-center justify-center border border-lime-400/50">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <span class="inline-block bg-lime-400/20 text-lime-300 text-xs font-bold px-3 py-1 rounded-full">Fast Track</span>
+                        </div>
+                        
+                        <h2 class="text-2xl font-bold text-white mb-6">I know what I want</h2>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Dream Job / Goal</label>
+                            <input type="text" id="goal-input" class="form-input" placeholder="e.g. AI Engineer, Data Analyst" required>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="form-label">Current Experience</label>
+                                <select id="exp-input" class="form-input">
+                                    <option value="Beginner">Beginner (Newbie)</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced (Pro)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Course Budget</label>
+                                <div class="flex gap-2">
+                                    <select id="currency-input" class="form-input w-1/3 text-center font-mono">
+                                        <option value="INR">₹ INR</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="EUR">€ EUR</option>
+                                    </select>
+                                    <select id="budget-input" class="form-input w-2/3">
+                                        <option value="0">Free Only (0)</option>
+                                        <option value="Low">Low (< 500)</option>
+                                        <option value="Medium">Medium (500 - 2000)</option>
+                                        <option value="High">Premium (2000+)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label">Weekly Study Time</label>
+                            <select id="time-input" class="form-input">
+                                <option value="5 hours/week">Casual (5 hrs/week)</option>
+                                <option value="10-15 hours/week">Serious (10-15 hrs/week)</option>
+                                <option value="Full-time">Full-time (40 hrs/week)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="prompt-submit-btn" class="btn-new mt-8">
+                        <span>Generate Custom Path</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3euFCtckrdkhxcwQw28PWooUoOycTSdU",
+            authDomain: "pathfinder-ai-87d22.firebaseapp.com",
+            projectId: "pathfinder-ai-87d22",
+            storageBucket: "pathfinder-ai-87d22.firebasestorage.app",
+            messagingSenderId: "254163992794",
+            appId: "1:254163992794:web:d34104f34142acac5be5e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- UI Elements ---
+        const promptForm = document.getElementById('prompt-form');
+        const submitBtn = document.getElementById('prompt-submit-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        
+        // Header Links
+        const headerProfile = document.getElementById('header-profile-link');
+        const headerSignin = document.getElementById('header-signin-link');
+
+        // --- Auth Check ---
+        onAuthStateChanged(auth, (user) => {
+            if (user && !user.isAnonymous) {
+                headerProfile.classList.remove('hidden');
+                headerSignin.classList.add('hidden');
+            } else {
+                headerProfile.classList.add('hidden');
+                headerSignin.classList.remove('hidden');
+                if (!user) signInAnonymously(auth).catch(console.error);
+            }
+        });
+
+        // --- FORM SUBMISSION ---
+        promptForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // 1. Gather Data
+            const goal = document.getElementById('goal-input').value.trim();
+            const exp = document.getElementById('exp-input').value;
+            const budgetVal = document.getElementById('budget-input').value; // e.g. "Low"
+            const currency = document.getElementById('currency-input').value; // e.g. "INR"
+            const time = document.getElementById('time-input').value;
+
+            // 2. Save currency for Results Page
+            sessionStorage.setItem('userCurrency', currency);
+
+            if (!goal) return;
+
+            // 3. Construct Smart Prompt
+            // Logic: If budget is '0', we ignore currency. Otherwise we combine them.
+            let budgetString = "Free Resources Only ($0)";
+            if (budgetVal !== "0") {
+                budgetString = `${budgetVal} Budget in ${currency}`;
+            }
+
+            const smartPrompt = `
+            I want to learn to be a: ${goal}.
+            My current experience level is: ${exp}.
+            My budget for courses is: ${budgetString}.
+            I can commit to studying: ${time}.
+            Create a step-by-step roadmap for me.
+            `;
+
+            // 4. Send to AI
+            handleGenerateRoadmap(smartPrompt, goal);
+        });
+
+        // --- AI GENERATION ---
+        const API_KEY = "AIzaSyA_wj1Ql_IaavQNfLPGYBNHjn4n9JiarzE";
+        const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`;
+        
+        const SYSTEM_INSTRUCTION = {
+            parts: [{
+                text: "You are an expert AI Career Mentor. Generate a JSON roadmap based on the user's constraints (Budget, Time, Experience). JSON Schema: { title, sourceGoal, steps: [{ title, description, courses: [{ name, platform }] }] }. Ensure courses match the user's budget (e.g. if Free, use YouTube/FreeCodeCamp; if Paid, use Udemy/Coursera)."
+            }]
+        };
+
+        async function handleGenerateRoadmap(fullPrompt, displayGoal) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Analyzing...";
+            loadingOverlay.classList.add('visible');
+            loadingText.innerText = `Personalizing path for "${displayGoal}"...`;
+
+            try {
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: fullPrompt }] }],
+                        systemInstruction: SYSTEM_INSTRUCTION,
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                });
+
+                if (!response.ok) throw new Error("API Error");
+
+                const data = await response.json();
+                const jsonText = data.candidates[0].content.parts[0].text;
+                
+                sessionStorage.setItem('newRoadmap', jsonText);
+                window.location.href = 'results.html';
+
+            } catch (error) {
+                console.error(error);
+                alert("Error generating roadmap. Please try again.");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Generate Custom Path";
+                loadingOverlay.classList.remove('visible');
+            }
+        }
+    </script>
+    
+    <footer class="container mx-auto px-6 py-12 border-t border-white/10 text-center text-gray-400 relative z-10">
+        <div class="flex flex-col items-center gap-6">
+            <p>&copy; 2025 Eduvo AI. All rights reserved.</p>
+            <div class="flex gap-8 text-sm font-medium">
+                <a href="legal.html#privacy" class="hover:text-lime-400">Privacy Policy</a>
+                <a href="legal.html#terms" class="hover:text-lime-400">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+    <script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js" charset="UTF-8"></script>
+    <script type="text/javascript" charset="UTF-8">
+        document.addEventListener('DOMContentLoaded', function () {
+            cookieconsent.run({"notice_banner_type":"simple","consent_type":"express","palette":"dark","language":"en","page_load_consent_levels":["strictly-necessary"],"notice_banner_reject_button_hide":false,"preferences_center_close_button_hide":false,"page_refresh_confirmation_buttons":false,"website_name":"EduvoAI"});
+        });
+    </script>
+
+    <noscript>Free cookie consent management tool by <a href="https://www.termsfeed.com/">TermsFeed</a></noscript>
+    <!-- End Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+    <!-- Below is the link that users can use to open Preferences Center to change their preferences. Do not modify the ID parameter. Place it where appropriate, style it as needed. -->
+    <a href="#" id="open_preferences_center">Update cookies preferences</a>
+
+</body>
+</html>

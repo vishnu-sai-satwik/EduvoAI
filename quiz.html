@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta name='impact-site-verification' value='5c27657f-deb8-40cb-b380-8bab37136a89'>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Discovery Quiz - Eduvo AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECJB4EMM1X"></script>
+     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ECJB4EMM1X');
+    </script>
+    <style>
+        /* --- Base Theme --- */
+        body {
+            background-color: #0A0A0A;
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- Aurora Background --- */
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -10; }
+        .aurora-glow { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; }
+        .aurora-1 { width: 500px; height: 500px; background: #A3E635; top: 0; left: 10%; animation: float 20s infinite linear -10s; }
+        .aurora-2 { width: 400px; height: 400px; background: #60A5FA; bottom: 10%; right: 20%; animation: float 20s infinite linear -5s; }
+        @keyframes float { 0% { transform: translate(0,0); } 50% { transform: translate(40px, 60px); } 100% { transform: translate(0,0); } }
+
+        /* --- Quiz Container --- */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .question-step {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .question-step.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Option Cards --- */
+        .option-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        @media (min-width: 768px) { .option-grid { grid-template-columns: 1fr 1fr; } }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .option-card:hover {
+            background: rgba(163, 230, 53, 0.1);
+            border-color: #A3E635;
+            transform: translateY(-3px);
+        }
+        .option-icon { font-size: 2rem; }
+        .option-text { font-weight: 600; font-size: 1.1rem; }
+
+        /* --- Dropdown Fix --- */
+        select option { background-color: #171717; color: white; padding: 10px; }
+        select.form-input {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            width: 100%;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+        }
+
+        /* --- Progress Bar --- */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 50; }
+        .progress-fill { height: 100%; background: #A3E635; width: 25%; transition: width 0.5s ease; box-shadow: 0 0 10px #A3E635; }
+
+        /* --- Loading Screen --- */
+        #loading-screen { display: none; text-align: center; padding-top: 4rem; }
+        .spinner { width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #A3E635; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 2rem auto; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .btn-back {
+            background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #aaa; padding: 0.5rem 1.5rem; border-radius: 99px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-back:hover { border-color: white; color: white; }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="progress-container">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="aurora-bg">
+        <div class="aurora-glow aurora-1"></div>
+        <div class="aurora-glow aurora-2"></div>
+    </div>
+
+    <header class="absolute top-0 left-0 w-full p-6 z-20 flex justify-between items-center">
+        <a href="personalize.html" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2 font-medium">
+            &larr; Exit Quiz
+        </a>
+        <div class="text-gray-500 text-sm font-mono" id="step-indicator">Step 1/4</div>
+    </header>
+
+    <main class="quiz-container">
+        
+        <div class="question-step active" id="step-1">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 text-center">What excites you most?</h1>
+            <p class="text-gray-400 text-center mb-8">We'll find a career that feels like play.</p>
+            
+            <div class="option-grid">
+                <div class="option-card" onclick="nextStep(1, 'Logic & Math')">
+                    <span class="option-icon">🧩</span>
+                    <span class="option-text">Solving Logic Puzzles</span>
+                </div>
+                <div class="option-card" onclick="nextStep(1, 'Visual Design')">
+                    <span class="option-icon">🎨</span>
+                    <span class="option-text">Designing Visuals</span>
+                </div>
+                <div class="option-card" onclick="nextStep(1, 'Data Analysis')">
+                    <span class="option-icon">📊</span>
+                    <span class="option-text">Analyzing Data</span>
+                </div>
+                <div class="option-card" onclick="nextStep(1, 'Helping People')">
+                    <span class="option-icon">🤝</span>
+                    <span class="option-text">Helping People</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-step" id="step-2">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 text-center">Dream Project</h1>
+            <p class="text-gray-400 text-center mb-8">If you had a magic wand, what would you build today?</p>
+            
+            <div class="option-grid">
+                <div class="option-card" onclick="nextStep(2, 'Mobile App')">
+                    <span class="option-icon">📱</span>
+                    <span class="option-text">A Mobile App</span>
+                </div>
+                <div class="option-card" onclick="nextStep(2, 'Website')">
+                    <span class="option-icon">💻</span>
+                    <span class="option-text">A Slick Website</span>
+                </div>
+                <div class="option-card" onclick="nextStep(2, 'AI Robot')">
+                    <span class="option-icon">🤖</span>
+                    <span class="option-text">An AI Robot</span>
+                </div>
+                <div class="option-card" onclick="nextStep(2, 'Video Game')">
+                    <span class="option-icon">🎮</span>
+                    <span class="option-text">A Video Game</span>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <button class="btn-back" onclick="prevStep(1)">Back</button>
+            </div>
+        </div>
+
+        <div class="question-step" id="step-3">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 text-center">Your Ideal Work Day</h1>
+            <p class="text-gray-400 text-center mb-8">How do you prefer to work?</p>
+            
+            <div class="option-grid">
+                <div class="option-card" onclick="nextStep(3, 'Deep Focus Solo')">
+                    <span class="option-icon">🕵️</span>
+                    <span class="option-text">Solo Deep Focus</span>
+                </div>
+                <div class="option-card" onclick="nextStep(3, 'Visual Creativity')">
+                    <span class="option-icon">✨</span>
+                    <span class="option-text">Visual Creativity</span>
+                </div>
+                <div class="option-card" onclick="nextStep(3, 'Team Leadership')">
+                    <span class="option-icon">📢</span>
+                    <span class="option-text">Leading a Team</span>
+                </div>
+                <div class="option-card" onclick="nextStep(3, 'Researching Patterns')">
+                    <span class="option-icon">🔍</span>
+                    <span class="option-text">Finding Patterns</span>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <button class="btn-back" onclick="prevStep(2)">Back</button>
+            </div>
+        </div>
+
+        <div class="question-step" id="step-4">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 text-center">Set Your Budget</h1>
+            <p class="text-gray-400 text-center mb-8">We'll find courses that fit your wallet.</p>
+            
+            <div class="max-w-md mx-auto glass-card p-8 rounded-2xl border border-white/10 bg-white/5">
+                <label class="block text-sm text-gray-400 mb-2">Preferred Currency</label>
+                <select id="quiz-currency" class="form-input mb-6">
+                    <option value="INR">🇮🇳 INR (₹)</option>
+                    <option value="USD">🇺🇸 USD ($)</option>
+                    <option value="EUR">🇪🇺 EUR (€)</option>
+                </select>
+
+                <div class="space-y-3">
+                    <div class="option-card justify-center" onclick="finishQuiz('0')">
+                        <span class="option-icon">🆓</span>
+                        <span class="option-text">Free Only ($0)</span>
+                    </div>
+                    <div class="option-card justify-center" onclick="finishQuiz('Low')">
+                        <span class="option-icon">💸</span>
+                        <span class="option-text">Low Budget</span>
+                    </div>
+                    <div class="option-card justify-center" onclick="finishQuiz('Premium')">
+                        <span class="option-icon">💎</span>
+                        <span class="option-text">Premium / Bootcamp</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <button class="btn-back" onclick="prevStep(3)">Back</button>
+            </div>
+        </div>
+
+        <div id="loading-screen">
+            <div class="spinner"></div>
+            <h2 class="text-3xl font-bold text-white">Analyzing your personality...</h2>
+            <p class="text-gray-400 mt-4 text-lg animate-pulse">Matching you with 10,000+ career paths...</p>
+        </div>
+
+    </main>
+
+    <script type="module">
+        // --- CONFIG ---
+        // --- TO-DO: PASTE YOUR API KEY HERE ---
+        const API_KEY = "AIzaSyA_wj1Ql_IaavQNfLPGYBNHjn4n9JiarzE"; 
+        // --------------------------------------
+
+        const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`;
+        
+        let answers = { interest: "", project: "", style: "", budget: "", currency: "USD" };
+
+        // Make functions global for HTML onclicks
+        window.nextStep = function(currentStep, value) {
+            // Save Answer
+            if(currentStep === 1) answers.interest = value;
+            if(currentStep === 2) answers.project = value;
+            if(currentStep === 3) answers.style = value;
+
+            // UI Transition
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.getElementById(`step-${currentStep+1}`).classList.add('active');
+            
+            // Progress Bar
+            const pct = ((currentStep + 1) / 4) * 100;
+            document.getElementById('progress-fill').style.width = `${pct}%`;
+            document.getElementById('step-indicator').textContent = `Step ${currentStep+1}/4`;
+        }
+
+        window.prevStep = function(targetStep) {
+            // Hide all, show target
+            document.querySelectorAll('.question-step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${targetStep}`).classList.add('active');
+            
+            // Progress Bar
+            const pct = (targetStep / 4) * 100;
+            document.getElementById('progress-fill').style.width = `${pct}%`;
+            document.getElementById('step-indicator').textContent = `Step ${targetStep}/4`;
+        }
+
+        window.finishQuiz = function(budgetValue) {
+            answers.budget = budgetValue;
+            answers.currency = document.getElementById('quiz-currency').value;
+
+            // SAVE CURRENCY FOR RESULTS PAGE (Fixes the $ vs ₹ issue)
+            sessionStorage.setItem('userCurrency', answers.currency);
+
+            // Show Loading
+            document.getElementById('step-4').classList.remove('active');
+            document.getElementById('loading-screen').style.display = 'block';
+            document.querySelector('header').style.display = 'none';
+            document.getElementById('progress-fill').style.width = '100%';
+
+            const smartPrompt = `
+                Act as an expert Career Counselor. 
+                I have analyzed a user with these traits:
+                1. Interests: ${answers.interest}
+                2. Dream Project: ${answers.project}
+                3. Work Style: ${answers.style}
+                4. Budget: ${answers.budget} (${answers.currency})
+
+                Task:
+                1. DECIDE the single best tech job title for them.
+                2. Generate a roadmap for that job.
+                3. Return ONLY valid JSON.
+                
+                JSON Schema:
+                {
+                  "title": "Roadmap: [Insert Job Title]",
+                  "sourceGoal": "Based on your match for [Job Title]",
+                  "steps": [
+                    {
+                      "title": "Step 1: [Title]",
+                      "description": "[Description]",
+                      "courses": [ { "name": "[Course Name]", "platform": "[Platform]" } ]
+                    }
+                  ]
+                }
+            `;
+
+            callGemini(smartPrompt);
+        }
+
+        async function callGemini(prompt) {
+            try {
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                if (!response.ok) throw new Error("API Error");
+
+                const data = await response.json();
+                const jsonText = data.candidates[0].content.parts[0].text;
+                
+                sessionStorage.setItem('newRoadmap', jsonText);
+                window.location.href = 'results.html';
+
+            } catch (error) {
+                console.error(error);
+                alert("Error generating path. Please try again.");
+                window.location.reload();
+            }
+        }
+    </script>
+
+    <!-- Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+    <script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js" charset="UTF-8"></script>
+    <script type="text/javascript" charset="UTF-8">
+        document.addEventListener('DOMContentLoaded', function () {
+            cookieconsent.run({"notice_banner_type":"simple","consent_type":"express","palette":"dark","language":"en","page_load_consent_levels":["strictly-necessary"],"notice_banner_reject_button_hide":false,"preferences_center_close_button_hide":false,"page_refresh_confirmation_buttons":false,"website_name":"EduvoAI"});
+        });
+    </script>
+
+    <noscript>Free cookie consent management tool by <a href="https://www.termsfeed.com/">TermsFeed</a></noscript>
+    <!-- End Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+    <!-- Below is the link that users can use to open Preferences Center to change their preferences. Do not modify the ID parameter. Place it where appropriate, style it as needed. -->
+    <a href="#" id="open_preferences_center">Update cookies preferences</a>
+
+</body>
+</html>

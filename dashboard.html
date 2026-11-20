@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta name='impact-site-verification' value='5c27657f-deb8-40cb-b380-8bab37136a89'>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Eduvo AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECJB4EMM1X"></script>
+     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ECJB4EMM1X');
+    </script>
+    
+    <style>
+        body {
+            background-color: #0A0A0A;
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Aurora Background --- */
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; overflow: hidden; }
+        .aurora-glow { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; }
+        .aurora-1 { width: 500px; height: 500px; background: #A3E635; top: 0; left: 10%; animation: float 20s infinite linear -10s; }
+        .aurora-2 { width: 400px; height: 400px; background: #60A5FA; bottom: 10%; right: 20%; animation: float 20s infinite linear -5s; }
+        @keyframes float { 0% { transform: translate(0, 0); } 50% { transform: translate(40px, 60px); } 100% { transform: translate(0, 0); } }
+
+        /* --- Glass Components --- */
+        .glass-card {
+            background-color: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        /* --- Roadmap Card (Redesigned) --- */
+        .roadmap-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 220px;
+        }
+        .roadmap-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(163, 230, 53, 0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+        .roadmap-icon-bg {
+            width: 3rem; height: 3rem;
+            border-radius: 0.75rem;
+            background: rgba(163, 230, 53, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: #A3E635;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Delete Button Styles --- */
+        .delete-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; /* Hidden by default */
+            transform: scale(0.9);
+            transition: all 0.2s ease;
+            z-index: 20; /* Ensure it's clickable above the card link */
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Show delete button on hover */
+        .roadmap-card:hover .delete-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(220, 38, 38, 0.2); /* Red tint */
+            color: #ef4444; /* Red icon */
+            border-color: #ef4444;
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; margin-top: 1rem;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, #A3E635, #BEF264); width: 0%; transition: width 1s ease-out;
+        }
+
+        /* --- Sidebar Widgets --- */
+        .stat-box {
+            background: rgba(255,255,255,0.03); border-radius: 1rem; padding: 1rem; border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        /* Buttons */
+        .btn-new {
+            background-image: linear-gradient(to right, #a3e635, #bef264);
+            color: #172554; font-weight: 700; padding: 0.75rem 1.5rem;
+            border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            transition: all 0.3s; cursor: pointer;
+        }
+        .btn-new:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(163, 230, 53, 0.4); }
+
+        .btn-secondary {
+            background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); color: #EAEAEA; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 99px; transition: all 0.3s ease; box-shadow: none; cursor: pointer;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1); border-color: #A3E635; color: #A3E635; transform: translateY(-2px);
+        }
+
+        .profile-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(145deg, #A3E635, #60A5FA);
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s;
+        }
+        .profile-icon:hover { transform: scale(1.05); }
+        .profile-icon svg { width: 24px; height: 24px; color: #0A0A0A; }
+
+        /* Spinner */
+        .spinner {
+            width: 48px; height: 48px; border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #A3E635; border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Badge Styles */
+        .badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0.4; filter: grayscale(1); transition: all 0.3s; }
+        .badge.unlocked { opacity: 1; filter: grayscale(0); border-color: #A3E635; background: rgba(163, 230, 53, 0.1); }
+        .badge-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .badge-name { font-size: 0.7rem; font-weight: 600; color: #aaa; }
+        .badge.unlocked .badge-name { color: white; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="aurora-bg">
+        <div class="aurora-glow aurora-1"></div>
+        <div class="aurora-glow aurora-2"></div>
+    </div>
+
+    <!-- Unified Top Bar (Cleaned for Dashboard) -->
+    <header class="relative z-30 border-b border-white/10">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-white flex items-center gap-2 tracking-tight">Eduvo <span class="text-lime-400">AI</span></a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="dashboard.html" class="text-white font-bold border-b-2 border-lime-400 pb-1">Dashboard</a>
+                <a href="personalize.html" class="text-gray-300 hover:text-white transition-colors font-medium">Generate</a>
+                <a href="cv-matcher-test.html" class="text-gray-300 hover:text-white transition-colors font-medium">CV Match</a>
+                <a href="projects.html" class="text-gray-300 hover:text-white transition-colors font-medium">Forge</a>
+                <a href="index.html#how-it-works" class="text-gray-300 hover:text-white transition-colors font-medium">How It Works</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="profile.html" id="header-profile-link" class="profile-icon hidden" title="My Profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A1.875 1.875 0 0118 22.5H6.002c-.997 0-1.808-.8-1.808-1.875z" /></svg>
+                </a>
+                <a href="signin.html?redirect=dashboard.html" id="header-signin-link" class="btn-new hidden w-auto px-6"><span>Sign In</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow container mx-auto px-6 py-12">
+        
+        <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-white">Welcome back, <span id="user-name" class="text-lime-400">Scholar</span></h1>
+                <p class="text-gray-400 mt-2">Let's continue building your future today.</p>
+            </div>
+            <a href="personalize.html" class="btn-new">
+                <span>+ New Roadmap</span>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span>🗺️</span> Active Paths
+                </h2>
+
+                <div id="loading-container" class="flex flex-col items-center justify-center py-12">
+                    <div class="spinner mb-4"></div>
+                    <p class="text-gray-500 text-sm">Syncing data...</p>
+                </div>
+
+                <div id="empty-state" class="hidden glass-card p-10 text-center border-dashed border-2 border-gray-700">
+                    <div class="text-5xl mb-4">🌱</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Start Your Journey</h3>
+                    <p class="text-gray-400 mb-6">You haven't generated any roadmaps yet.</p>
+                    <a href="personalize.html" class="text-lime-400 hover:underline">Generate First Path &rarr;</a>
+                </div>
+
+                <div id="roadmaps-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                    </div>
+            </div>
+
+            <div class="space-y-8">
+                
+                <div class="glass-card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-white">Achievements</h2>
+                        <a href="profile.html" class="text-xs text-lime-400 hover:underline">View All</a>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="stat-box text-center">
+                            <div class="text-3xl mb-1">🔥</div>
+                            <div class="text-2xl font-bold text-white" id="streak-count">0</div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide">Day Streak</div>
+                        </div>
+                        <div class="stat-box text-center">
+                            <div class="text-3xl mb-1">🏆</div>
+                            <div class="text-2xl font-bold text-white" id="badge-count">0</div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide">Badges</div>
+                        </div>
+                    </div>
+                    <div id="mini-badge-grid" class="grid grid-cols-4 gap-2 mt-6">
+                        </div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Weekly Focus</h2>
+                            <p id="current-date-display" class="text-xs text-lime-400 mt-1 font-mono opacity-80">Loading date...</p>
+                        </div>
+                        <div class="p-2 bg-white/5 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div id="weekly-chart-container" class="flex justify-between items-end h-32 gap-2">
+                        </div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <button id="sign-out-btn" class="btn-secondary w-full">Sign Out</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="container mx-auto px-6 py-12 border-t border-white/10 text-center text-gray-400 relative z-10">
+        <div class="flex flex-col items-center gap-6">
+            <p>&copy; 2025 Eduvo AI. All rights reserved.</p>
+            <div class="flex gap-8 text-sm font-medium">
+                <a href="legal.html#privacy" class="hover:text-lime-400">Privacy Policy</a>
+                <a href="legal.html#terms" class="hover:text-lime-400">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3euFCtckrdkhxcwQw28PWooUoOycTSdU",
+            authDomain: "pathfinder-ai-87d22.firebaseapp.com",
+            projectId: "pathfinder-ai-87d22",
+            storageBucket: "pathfinder-ai-87d22.firebasestorage.app",
+            messagingSenderId: "254163992794",
+            appId: "1:254163992794:web:d34104f34142acac5be5e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = 'default-app-id';
+
+        const loadingContainer = document.getElementById('loading-container');
+        const roadmapsGrid = document.getElementById('roadmaps-grid');
+        const emptyState = document.getElementById('empty-state');
+        const userNameEl = document.getElementById('user-name');
+        const streakEl = document.getElementById('streak-count');
+        const badgeEl = document.getElementById('badge-count');
+        const headerProfile = document.getElementById('header-profile-link');
+        const headerSignin = document.getElementById('header-signin-link');
+
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initWeeklyChart(); 
+        });
+
+        window.addEventListener('focus', () => {
+            if (currentUserId) fetchRoadmaps(currentUserId);
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !user.isAnonymous) {
+                currentUserId = user.uid;
+                userNameEl.textContent = user.displayName ? user.displayName.split(' ')[0] : "Scholar";
+                headerProfile.classList.remove('hidden');
+                headerSignin.classList.add('hidden');
+                
+                await Promise.all([fetchRoadmaps(user.uid), fetchStats(user.uid)]);
+            } else {
+                headerProfile.classList.add('hidden');
+                headerSignin.classList.remove('hidden');
+                window.location.href = 'signin.html?redirect=dashboard.html';
+            }
+        });
+
+        function initWeeklyChart() {
+            const container = document.getElementById('weekly-chart-container');
+            const dateDisplay = document.getElementById('current-date-display');
+            if (!container || !dateDisplay) return;
+
+            const now = new Date();
+            const options = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
+            dateDisplay.textContent = now.toLocaleDateString('en-US', options);
+
+            let todayIndex = now.getDay() - 1; 
+            if (todayIndex === -1) todayIndex = 6; 
+
+            const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+            let html = '';
+
+            days.forEach((day, index) => {
+                const isToday = index === todayIndex;
+                let height = '10%';
+                if (isToday) height = '80%';
+                else if (index < todayIndex) height = Math.floor(Math.random() * 40 + 30) + '%';
+                else height = '5%';
+
+                const barColor = isToday ? 'bg-lime-400' : 'bg-white/10';
+                const textColor = isToday ? 'text-lime-400 font-bold' : 'text-gray-500';
+                const shadow = isToday ? 'shadow-[0_0_15px_rgba(163,230,53,0.3)]' : '';
+
+                html += `
+                    <div class="flex flex-col items-center gap-2 w-full h-full justify-end group">
+                        <div class="w-full bg-white/5 rounded-md relative overflow-hidden h-full flex items-end">
+                            <div class="${barColor} ${shadow} w-full rounded-md transition-all duration-1000 ease-out" style="height: ${height}"></div>
+                        </div>
+                        <span class="text-xs ${textColor}">${day}</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function fetchStats(userId) {
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'users', userId);
+                const docSnap = await getDoc(docRef);
+                if(docSnap.exists()) {
+                    const data = docSnap.data();
+                    streakEl.textContent = data.streak !== undefined ? data.streak : 0; 
+                    const badges = data.badges || [];
+                    badgeEl.textContent = badges.length;
+                    renderMiniBadges(badges);
+                }
+            } catch(e) { console.log("Stats error", e); }
+        }
+        
+        function renderMiniBadges(earnedBadges) {
+            const container = document.getElementById('mini-badge-grid');
+            container.innerHTML = '';
+            const badgeMap = {
+                'first-roadmap': { icon: '🌱', name: 'Starter' },
+                'first-step': { icon: '👟', name: 'First Step' },
+                '5-day-streak': { icon: '🔥', name: 'On Fire' },
+                'roadmap-complete': { icon: '🏆', name: 'Champion' }
+            };
+            
+            Object.keys(badgeMap).forEach(key => {
+                const badge = badgeMap[key];
+                const isUnlocked = earnedBadges.includes(key);
+                const el = document.createElement('div');
+                el.className = `badge ${isUnlocked ? 'unlocked' : ''}`;
+                el.innerHTML = `<span class="badge-icon">${badge.icon}</span><span class="badge-name">${badge.name}</span>`;
+                container.appendChild(el);
+            });
+        }
+
+        async function fetchRoadmaps(userId) {
+            try {
+                const roadmapsRef = collection(db, 'artifacts', appId, 'users', userId, 'roadmaps');
+                const q = query(roadmapsRef, orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+
+                loadingContainer.classList.add('hidden');
+                roadmapsGrid.innerHTML = '';
+
+                if (snapshot.empty) {
+                    emptyState.classList.remove('hidden');
+                    roadmapsGrid.classList.add('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    roadmapsGrid.classList.remove('hidden');
+                    
+                    snapshot.forEach(docSnap => {
+                        createRoadmapCard(docSnap.data(), docSnap.id);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching roadmaps:", error);
+                loadingContainer.innerHTML = `<p class="text-red-500">Error loading data.</p>`;
+            }
+        }
+
+        function createRoadmapCard(data, id) {
+            const card = document.createElement('div');
+            card.className = 'roadmap-card group';
+            
+            let icon = '🎓';
+            const t = (data.title || '').toLowerCase();
+            if (t.includes('android') || t.includes('mobile')) icon = '📱';
+            else if (t.includes('python') || t.includes('data')) icon = '🐍';
+            else if (t.includes('design') || t.includes('ui')) icon = '🎨';
+            else if (t.includes('web') || t.includes('react')) icon = '💻';
+
+            const total = data.steps ? data.steps.length : 0;
+            const completed = data.steps ? data.steps.filter(s => s.completed).length : 0;
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+            let nextStep = "All caught up!";
+            if (data.steps) {
+                const next = data.steps.find(s => !s.completed);
+                if (next) nextStep = "Next: " + next.title;
+            }
+
+            card.innerHTML = `
+                <button class="delete-btn" title="Delete Roadmap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+                <div>
+                    <div class="flex justify-between items-start">
+                        <div class="roadmap-icon-bg group-hover:bg-lime-400 group-hover:text-black transition-colors">${icon}</div>
+                        <span class="text-xs font-mono text-gray-500">${completed}/${total} Steps</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1 line-clamp-2">${data.title}</h3>
+                    <p class="text-xs text-lime-400 font-medium mb-4">${nextStep}</p>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs text-gray-400 mb-1">
+                        <span>Progress</span><span>${percent}%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
+                </div>
+            `;
+
+            card.addEventListener('click', () => { window.location.href = 'results.html?id=' + id; });
+
+            const deleteBtn = card.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', async (e) => {
+                e.stopPropagation(); 
+                const confirmDelete = confirm(`Are you sure you want to delete "${data.title}"?`);
+                if (confirmDelete) {
+                    try {
+                        card.style.opacity = '0.5'; card.style.pointerEvents = 'none';
+                        await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUserId, 'roadmaps', id));
+                        card.remove();
+                        if (roadmapsGrid.children.length === 0) {
+                            roadmapsGrid.classList.add('hidden');
+                            emptyState.classList.remove('hidden');
+                        }
+                    } catch (error) {
+                        console.error("Delete error:", error);
+                        alert("Error: " + error.code + " - " + error.message);
+                        card.style.opacity = '1';
+                    }
+                }
+            });
+
+            roadmapsGrid.appendChild(card);
+        }
+        
+        document.getElementById('sign-out-btn').addEventListener('click', async () => {
+             await signOut(auth);
+             window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

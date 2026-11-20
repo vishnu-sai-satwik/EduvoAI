@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta name='impact-site-verification' value='5c27657f-deb8-40cb-b380-8bab37136a89'>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduvo Forge | Live Engineering Hub</title>
+    
+    <!-- Tailwind CSS (Unified with Dashboard) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CodeMirror Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECJB4EMM1X"></script>
+     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ECJB4EMM1X');
+    </script> 
+
+    <style>
+        body { background-color: #0A0A0A; color: #EAEAEA; font-family: 'Inter', sans-serif; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* --- AURORA BACKGROUND --- */
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; overflow: hidden; z-index: -10; }
+        .aurora-glow { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15; will-change: transform; }
+        .aurora-1 { width: 500px; height: 500px; background: #A3E635; top: 0; left: 10%; animation: float 20s infinite linear -10s; }
+        .aurora-2 { width: 400px; height: 400px; background: #60A5FA; bottom: 10%; right: 20%; animation: float 20s infinite linear -5s; }
+        @keyframes float { 0% { transform: translateY(0px) translateX(0px) rotate(0deg); } 50% { transform: translateY(40px) translateX(60px) rotate(20deg); } 100% { transform: translateY(0px) translateX(0px) rotate(0deg); } }
+
+        /* --- CINEMATIC MOVIE SPLASH SCREEN --- */
+        #cinematic-splash { position: fixed; inset: 0; background-color: #050505; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease-in-out, visibility 1s; }
+        .movie-title-wrapper { text-align: center; animation: movieIntro 4.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        .movie-title { font-size: 5rem; font-weight: 800; letter-spacing: -2px; color: white; margin: 0; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .movie-title span { color: #A3E635; text-shadow: 0 0 20px rgba(163, 230, 53, 0.4); }
+        .movie-subtitle { color: #888; font-size: 1rem; letter-spacing: 0.4em; text-transform: uppercase; margin-top: 10px; font-weight: 600; }
+        .movie-loader { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 40px; border-radius: 2px; overflow: hidden; position: relative; }
+        .movie-loader::after { content: ''; position: absolute; top: 0; left: -50%; width: 50%; height: 100%; background: #A3E635; box-shadow: 0 0 10px #A3E635; animation: loadSweep 2s ease-in-out infinite; }
+        
+        @keyframes movieIntro { 
+            0% { opacity: 0; transform: scale(0.85); filter: blur(10px); }
+            15% { opacity: 1; transform: scale(1); filter: blur(0); }
+            85% { opacity: 1; transform: scale(1.05); filter: blur(0); }
+            100% { opacity: 0; transform: scale(1.1); filter: blur(5px); }
+        }
+        @keyframes loadSweep { 0% { left: -50%; } 100% { left: 100%; } }
+        #cinematic-splash.fade-out { opacity: 0; visibility: hidden; }
+
+        /* --- GLASS COMPONENTS --- */
+        .glass-card { background-color: rgba(30, 30, 30, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; transition: all 0.3s ease; }
+        .glass-panel { background: linear-gradient(145deg, rgba(20, 20, 20, 0.9), rgba(10, 10, 10, 0.95)); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
+
+        /* --- BUTTONS --- */
+        .btn-new { background-image: linear-gradient(to right, #a3e635, #bef264); color: #172554; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 15px 0 rgba(163, 230, 53, 0.3); cursor: pointer; white-space: nowrap; }
+        .btn-new:hover { transform: translateY(-2px); box-shadow: 0 6px 20px 0 rgba(163, 230, 53, 0.5); }
+        .btn-new:disabled { background: #4d7c0f; box-shadow: none; transform: none; cursor: not-allowed; opacity: 0.7; }
+        .btn-secondary { background-color: rgba(255, 255, 255, 0.1); color: #EAEAEA; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 99px; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); border-color: #A3E635; color: #A3E635; }
+
+        /* --- UPDATED FORMS UI --- */
+        .form-label { display: block; font-size: 0.875rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.5rem; letter-spacing: 0.025em; }
+        .form-input { width: 100%; background-color: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding: 0.875rem 1rem; color: #EAEAEA; font-size: 1rem; transition: all 0.3s ease; }
+        .form-input:focus { outline: none; border-color: #A3E635; box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2); background-color: rgba(0,0,0,0.5); }
+        textarea.form-input { resize: vertical; min-height: 120px; line-height: 1.5; }
+        select.form-input { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; cursor: pointer; }
+        select.form-input option { background-color: #121212; color: #fff; padding: 10px; }
+
+        /* --- FORGE SPECIFIC COMPONENTS --- */
+        .profile-icon { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(145deg, #A3E635, #60A5FA); border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .profile-icon:hover { transform: scale(1.1); box-shadow: 0 4px 15px rgba(163, 230, 53, 0.5); }
+        .profile-icon svg { width: 24px; height: 24px; color: #0A0A0A; }
+
+        .forge-card { background-color: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1.5rem; padding: 1.75rem; transition: all 0.3s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 240px; }
+        .forge-card:hover { transform: translateY(-5px); border-color: rgba(163, 230, 53, 0.5); box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 0 20px rgba(163,230,53,0.05); background-color: rgba(255, 255, 255, 0.04); }
+        .forge-tag { font-size: 0.7rem; padding: 0.25rem 0.75rem; border-radius: 99px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; border: 1px solid transparent; }
+        .tag-hard { background: rgba(239, 68, 68, 0.1); color: #fca5a5; border-color: rgba(239,68,68,0.2); }
+        .tag-med { background: rgba(234, 179, 8, 0.1); color: #fde047; border-color: rgba(234,179,8,0.2); }
+        .tag-easy { background: rgba(163, 230, 53, 0.1); color: #A3E635; border-color: rgba(163,230,53,0.2); }
+        .tag-tech { background: rgba(255,255,255,0.05); color: #d1d5db; border-color: rgba(255,255,255,0.1); }
+
+        .delete-btn { position: absolute; top: 1.5rem; right: 1.5rem; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.5); color: #9ca3af; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.9); transition: all 0.2s ease; z-index: 20; border: 1px solid rgba(255,255,255,0.1); }
+        .forge-card:hover .delete-btn { opacity: 1; transform: scale(1); }
+        .delete-btn:hover { background-color: rgba(220, 38, 38, 0.2); color: #ef4444; border-color: #ef4444; }
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; padding: 20px; overflow-y: auto; }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+        
+        .modal-content { max-width: 700px; width: 100%; margin: auto; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+
+        /* --- WORKSPACE UI (MULTI-FILE) --- */
+        .workspace-ui { width: 100%; max-width: 1400px; height: 90vh; display: grid; grid-template-columns: 1fr 1.5fr; overflow: hidden; margin: auto; border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); transform: scale(0.95); transition: transform 0.3s; }
+        .modal-overlay.open .workspace-ui { transform: scale(1); }
+        
+        .task-panel { padding: 40px; border-right: 1px solid rgba(255,255,255,0.1); overflow-y: auto; background: #121212; position: relative; min-width: 0; }
+        .editor-panel { padding: 0; display: flex; flex-direction: column; background: #0A0A0A; position: relative; height: 100%; min-width: 0; }
+        
+        /* Tab System */
+        .editor-header { background: #111; border-bottom: 1px solid #222; display: flex; align-items: flex-end; overflow-x: auto; scrollbar-width: none; width: 100%; }
+        .editor-header::-webkit-scrollbar { display: none; }
+        .file-tabs { display: flex; flex-grow: 1; min-width: max-content; }
+        .file-tab { padding: 12px 24px; font-size: 0.85rem; font-weight: 600; color: #6b7280; background: #161616; border-right: 1px solid #222; border-top: 2px solid transparent; cursor: pointer; white-space: nowrap; user-select: none; display: flex; align-items: center; gap: 8px; transition: all 0.2s;}
+        .file-tab.active { color: #A3E635; background: #0A0A0A; border-top-color: #A3E635; margin-bottom: -1px; border-bottom: 1px solid #0A0A0A; }
+        .file-tab:hover:not(.active) { background: #1e1e1e; color: #9ca3af; }
+        .tab-close { font-size: 1.1rem; margin-left: 8px; opacity: 0.5; transition: 0.2s; border-radius: 4px; padding: 0 4px; }
+        .tab-close:hover { opacity: 1; color: #ef4444; background: rgba(239,68,68,0.1); }
+        .add-file-btn { background: transparent; border: none; border-right: 1px solid #222; color: #6b7280; font-size: 1.2rem; cursor: pointer; padding: 10px 20px; transition: 0.2s; }
+        .add-file-btn:hover { color: #A3E635; background: #1e1e1e; }
+
+        /* CodeMirror Override - Fixed for perfect scrolling */
+        .editor-wrapper { flex-grow: 1; position: relative; min-height: 0; overflow: hidden; }
+        .CodeMirror { position: absolute !important; top: 0; left: 0; right: 0; bottom: 0; height: 100% !important; width: 100% !important; font-family: 'Courier New', monospace; font-size: 15px; background: #0A0A0A !important; color: #EAEAEA; line-height: 1.6; }
+        .CodeMirror-gutters { background: #0A0A0A !important; border-right: 1px solid #222 !important; }
+
+        .emergency-textarea { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; background: #0A0A0A; border: none; color: #EAEAEA; font-family: 'Courier New', monospace; padding: 25px; font-size: 15px; resize: none; outline: none; display: none; z-index: 10; }
+        
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255, 255, 255, 0.2); border-left-color: #A3E635; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 1rem 2rem; background-color: #A3E635; color: #0A0A0A; font-weight: 700; border-radius: 99px; box-shadow: 0 10px 30px rgba(163, 230, 53, 0.4); z-index: 10000; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        .toast.show { bottom: 30px; }
+        .toast.error { background-color: #EF4444; color: white; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); }
+
+        /* --- FEEDBACK MODAL STYLES --- */
+        .feedback-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+            z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease;
+        }
+        .feedback-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -40%) scale(0.95);
+            background: #121212; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
+            padding: 40px; width: 90%; max-width: 450px; z-index: 10000;
+            opacity: 0; visibility: hidden; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); text-align: center;
+        }
+        .feedback-modal.visible, .feedback-modal-backdrop.visible { opacity: 1; visibility: visible; }
+        .feedback-modal.visible { transform: translate(-50%, -50%) scale(1); }
+
+        .star-rating { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; direction: rtl; }
+        .star { font-size: 2.5rem; color: #333; cursor: pointer; transition: 0.2s; user-select: none; }
+        .star:hover, .star:hover ~ .star, .star.active, .star.active ~ .star { color: #ffc839; text-shadow: 0 0 15px rgba(255, 200, 57, 0.4); }
+        
+        .floating-feedback-btn {
+            position: fixed; bottom: 30px; right: 30px; z-index: 50;
+            background: #111; color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px;
+            border-radius: 50px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease;
+            display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .floating-feedback-btn:hover {
+            background: rgba(186, 255, 57, 0.08); border-color: #A3E635; color: #A3E635;
+            box-shadow: 0 0 20px rgba(186, 255, 57, 0.2); transform: translateY(-2px);
+        }
+
+        @media (max-width: 1024px) {
+            .workspace-ui { grid-template-columns: 1fr; height: 95vh; overflow-y: auto; }
+            .task-panel { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); height: auto; }
+            .editor-panel { height: 600px; }
+            .floating-feedback-btn { bottom: 20px; right: 20px; padding: 10px 20px; font-size: 0.85rem; }
+        }
+    </style>
+
+    <script>
+        // Global Gamification Initialization
+        function updateHeaderGamification() {
+            const userXP = parseInt(localStorage.getItem('forge_user_xp')) || 0;
+            const userStreak = parseInt(localStorage.getItem('forge_user_streak')) || 0;
+            
+            let rankName = "Junior Dev", rankColor = "text-purple-400", rankIcon = "🌱";
+            if (userXP >= 1000) { rankName = "Mid-Level"; rankColor = "text-blue-500"; rankIcon = "🛠️"; }
+            if (userXP >= 2500) { rankName = "Senior Dev"; rankColor = "text-yellow-500"; rankIcon = "⚡"; }
+            if (userXP >= 5000) { rankName = "Staff Eng"; rankColor = "text-red-500"; rankIcon = "🔥"; }
+            if (userXP >= 10000) { rankName = "Principal"; rankColor = "text-lime-400"; rankIcon = "👑"; }
+
+            const rankEl = document.getElementById('header-rank-text');
+            const rankIconEl = document.getElementById('header-rank-icon');
+            const streakEl = document.getElementById('header-streak');
+            const xpEl = document.getElementById('header-xp');
+
+            if(rankEl) {
+                rankEl.textContent = rankName; rankEl.className = `font-bold ${rankColor}`;
+                rankIconEl.textContent = rankIcon;
+                streakEl.textContent = userStreak + (userStreak === 1 ? " Day" : " Days");
+                xpEl.textContent = userXP.toLocaleString() + " XP";
+            }
+        }
+        document.addEventListener("DOMContentLoaded", updateHeaderGamification);
+    </script>
+</head>
+<body class="antialiased">
+
+    <!-- MOVIE ANIMATION SPLASH SCREEN -->
+    <div id="cinematic-splash">
+        <div class="movie-title-wrapper">
+            <h1 class="movie-title">Eduvo <span>AI</span></h1>
+            <div class="movie-subtitle">The Engineering Forge</div>
+            <div class="flex justify-center"><div class="movie-loader"></div></div>
+        </div>
+    </div>
+
+    <!-- AURORA BACKGROUND -->
+    <div class="aurora-bg">
+        <div class="aurora-glow aurora-1"></div>
+        <div class="aurora-glow aurora-2"></div>
+    </div>
+
+    <!-- UNIFIED TOP BAR -->
+    <header class="relative z-30 border-b border-white/10 bg-black/40 backdrop-blur-md sticky top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-white flex items-center gap-2 tracking-tight">Eduvo <span class="text-lime-400">AI</span></a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors font-medium">Dashboard</a>
+                <a href="personalize.html" class="text-gray-300 hover:text-white transition-colors font-medium">Generate</a>
+                <a href="cv-matcher-test.html" class="text-gray-300 hover:text-white transition-colors font-medium">CV Match</a>
+                <a href="projects.html" class="text-white font-bold border-b-2 border-lime-400 pb-1">Forge</a>
+                <a href="index.html#how-it-works" class="text-gray-300 hover:text-white transition-colors font-medium">How It Works</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                
+                <button class="btn-new hidden sm:flex px-4 py-2 text-sm" onclick="openPostModal(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Post Ticket
+                </button>
+
+                <div class="hidden lg:flex items-center gap-2">
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-wide uppercase shadow-inner"><span id="header-rank-icon">🌱</span> <span id="header-rank-text" class="text-purple-400">Junior Dev</span></div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-wide uppercase shadow-inner">🔥 <span id="header-streak" class="text-orange-400">0 Days</span></div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-wide uppercase shadow-inner">⚡ <span id="header-xp" class="text-lime-400">0 XP</span></div>
+                </div>
+
+                <a href="profile.html" id="header-profile-link" class="profile-icon hidden" title="My Profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A1.875 1.875 0 0118 22.5H6.002c-.997 0-1.808-.8-1.808-1.875z" /></svg>
+                </a>
+                <a href="signin.html?redirect=projects.html" id="header-signin-link" class="btn-secondary hidden md:flex w-auto px-6">
+                    Sign In
+                </a>
+                <!-- Mobile Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2 focus:outline-none z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex flex-col opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="flex justify-between items-center p-6 border-b border-white/10">
+            <a href="index.html" class="text-2xl font-bold text-white tracking-tight">Eduvo <span class="text-lime-400">AI</span></a>
+            <button id="close-menu-btn" class="text-gray-400 hover:text-white p-2 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <nav class="flex flex-col items-center justify-center flex-grow gap-8 text-xl">
+            <a href="dashboard.html" class="mobile-link text-gray-300 hover:text-white transition-colors">Dashboard</a>
+            <a href="personalize.html" class="mobile-link text-gray-300 hover:text-white transition-colors">Generate Path</a>
+            <a href="cv-matcher-test.html" class="mobile-link text-gray-300 hover:text-white transition-colors">CV Match Pro</a>
+            <a href="projects.html" class="mobile-link text-gray-300 hover:text-white transition-colors">Eduvo Forge</a>
+            <button onclick="openPostModal(event); document.getElementById('mobile-menu').classList.remove('opacity-100', 'pointer-events-auto'); document.getElementById('mobile-menu').classList.add('opacity-0', 'pointer-events-none'); document.body.style.overflow = '';" class="text-lime-400 font-bold hover:text-white transition-colors">Post a Ticket</button>
+            <a href="signin.html?redirect=projects.html" id="mobile-signin-link" class="btn-new !py-3 !px-8 mt-4 hidden">Sign In</a>
+        </nav>
+    </div>
+
+    <main class="relative z-10 flex-grow">
+        <!-- HERO SECTION -->
+        <section class="container mx-auto px-6 pt-16 pb-12 text-center">
+            <div class="inline-block bg-lime-400/10 border border-lime-400/20 text-lime-400 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide mb-6">
+                THE ENGINEERING SIMULATOR
+            </div>
+            <h1 class="text-5xl md:text-7xl font-black text-white tracking-tight mb-6 leading-tight">
+                Don't just learn.<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500">Build for Reality.</span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10 font-light">
+                Generate custom engineering tickets using AI, write code across a multi-file IDE, and get instantly graded by our Senior AI Dev.
+            </p>
+            <div class="flex justify-center gap-4">
+                <button onclick="openRulesModal()" class="btn-secondary text-sm px-5 py-2 hover:bg-white/10 border-white/20 text-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Read the Rules
+                </button>
+            </div>
+        </section>
+
+        <!-- AI TICKET GENERATOR -->
+        <section class="container mx-auto px-6 pb-16">
+            <div class="glass-panel p-3 flex flex-col md:flex-row items-center gap-3 max-w-4xl mx-auto">
+                <div class="flex-grow flex items-center gap-3 w-full bg-black/40 rounded-xl px-4 py-3 border border-white/5 focus-within:border-lime-400/50 transition-colors">
+                    <span class="text-xl">✨</span>
+                    <input type="text" id="hero-prompt" class="bg-transparent border-none text-white w-full focus:outline-none placeholder-gray-500 text-lg" placeholder="E.g., I want to practice building a secure user login API...">
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <select id="hero-domain" class="form-input appearance-none bg-black/60 border border-white/10 !py-3 min-w-[180px] w-full sm:w-auto cursor-pointer">
+                        <option value="web">Web Development</option><option value="app">Mobile App</option>
+                        <option value="dsa">DSA & Logic</option><option value="aiml">AI / ML</option>
+                        <option value="devops">DevOps & Cloud</option><option value="data">Data Science</option>
+                    </select>
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <select id="hero-difficulty" class="form-input appearance-none bg-black/60 border border-white/10 !py-3 min-w-[120px] w-full sm:w-auto cursor-pointer">
+                            <option value="easy">Easy</option><option value="med">Medium</option><option value="hard">Hard</option>
+                        </select>
+                        <button class="btn-new !py-3 px-8 shadow-lg shadow-lime-400/20 w-full sm:w-auto whitespace-nowrap" id="hero-gen-btn" onclick="generateFromHero(event)">Generate</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FILTERS & GRID -->
+        <section class="container mx-auto px-6 pb-24">
+            <div class="flex justify-center gap-3 mb-10 flex-wrap">
+                <button class="filter-btn px-5 py-2 rounded-full font-semibold text-sm bg-white/5 text-gray-400 border border-white/10 hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all active" onclick="setFilter('all', this)">All Domains</button>
+                <button class="filter-btn px-5 py-2 rounded-full font-semibold text-sm bg-white/5 text-gray-400 border border-white/10 hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all" onclick="setFilter('web', this)">Web Dev</button>
+                <button class="filter-btn px-5 py-2 rounded-full font-semibold text-sm bg-white/5 text-gray-400 border border-white/10 hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all" onclick="setFilter('app', this)">Mobile App</button>
+                <button class="filter-btn px-5 py-2 rounded-full font-semibold text-sm bg-white/5 text-gray-400 border border-white/10 hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all" onclick="setFilter('dsa', this)">DSA & Logic</button>
+                <button class="filter-btn px-5 py-2 rounded-full font-semibold text-sm bg-white/5 text-gray-400 border border-white/10 hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all" onclick="setFilter('aiml', this)">AI / ML</button>
+                <button class="filter-btn px-5 py-2 rounded-full font-semibold text-sm bg-white/5 text-gray-400 border border-white/10 hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all" onclick="setFilter('devops', this)">DevOps & Cloud</button>
+                <button class="filter-btn px-5 py-2 rounded-full font-semibold text-sm bg-white/5 text-gray-400 border border-white/10 hover:bg-lime-400 hover:text-black hover:border-lime-400 transition-all" onclick="setFilter('data', this)">Data Science</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="public-tickets-grid">
+                <!-- Javascript will inject cards or empty state here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- FEEDBACK FLOATING BUTTON -->
+    <button class="floating-feedback-btn" onclick="window.openFeedbackModal(event)">
+        Rate Forge <span style="font-size: 1.1rem;">⭐</span>
+    </button>
+
+    <!-- FEEDBACK MODAL -->
+    <div id="feedback-backdrop" class="feedback-modal-backdrop"></div>
+    <div id="feedback-modal" class="feedback-modal">
+        <h3 style="margin-top:0; font-weight: 800; font-size: 1.5rem; color: white;">Rate Eduvo Forge</h3>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Help us improve this new feature! How is your experience?</p>
+        
+        <div class="star-rating" id="star-container">
+            <span class="star" data-value="5">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="1">★</span>
+        </div>
+        
+        <textarea id="feedback-text" placeholder="Tell us what you love, or what's missing..." style="min-height: 100px; margin-bottom: 15px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; width: 100%; font-family: 'Inter', sans-serif; resize: vertical; outline: none;"></textarea>
+        
+        <div style="display: flex; gap: 12px; margin-top: 10px;">
+            <button class="btn-new" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 15px; text-transform: none; font-size: 0.95rem; box-shadow: none;" onclick="closeFeedbackModal()">Cancel</button>
+            <button class="btn-new" id="submit-feedback-btn" style="flex: 2; padding: 15px; text-transform: none; font-size: 0.95rem;" onclick="submitFeedback(event)">Submit Feedback</button>
+        </div>
+    </div> 
+
+    <!-- ========================================== -->
+    <!-- RULES & REGULATIONS MODAL                  -->
+    <!-- ========================================== -->
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal-content glass-panel p-8 relative">
+            <button onclick="closeModal('rules-modal')" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h2 class="text-3xl font-black text-white mb-2 flex items-center gap-3"><span class="text-lime-400">⚖️</span> Forge Rules</h2>
+            <p class="text-gray-400 mb-8">Understand how your submissions are graded and tracked.</p>
+            
+            <div class="space-y-4">
+                <div class="flex gap-4 items-start bg-white/5 p-4 rounded-xl border border-white/10">
+                    <div class="text-2xl mt-1">🎯</div>
+                    <div>
+                        <h4 class="text-white font-bold text-lg mb-1">Passing Criteria</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">The Senior AI Dev grades your code from 0 to 100. You must score at least <strong>70/100</strong> for your PR to be approved and earn XP. Code submitted in the wrong programming language gets an automatic 0.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start bg-white/5 p-4 rounded-xl border border-white/10">
+                    <div class="text-2xl mt-1">📈</div>
+                    <div>
+                        <h4 class="text-white font-bold text-lg mb-1">XP & Gamification</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">Successful submissions earn XP. Accumulate XP to rank up from Junior Dev to Principal. Maintaining a daily coding streak unlocks bonuses.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start bg-white/5 p-4 rounded-xl border border-white/10">
+                    <div class="text-2xl mt-1">💾</div>
+                    <div>
+                        <h4 class="text-white font-bold text-lg mb-1">Auto-Save & Isolation</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">Your code is automatically saved securely to your local browser. If you close the tab, your draft will be exactly as you left it. Your work is 100% private and isolated from other users.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start bg-white/5 p-4 rounded-xl border border-white/10">
+                    <div class="text-2xl mt-1">🛡️</div>
+                    <div>
+                        <h4 class="text-white font-bold text-lg mb-1">Anti-Cheat System</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">Massive copy-pasting, inhuman typing speeds, or frequent tab-switching will flag your session. If flagged, you must verbally defend your code logic to the AI to pass.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-new w-full mt-6 py-4 text-lg" onclick="closeModal('rules-modal')">I Understand</button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- WORKSPACE MODAL (Multi-File Editor)        -->
+    <!-- ========================================== -->
+    <div class="modal-overlay" id="workspace-modal">
+        <div class="workspace-ui">
+            <!-- Left Panel -->
+            <div class="task-panel flex flex-col">
+                <button onclick="closeModal('workspace-modal')" class="text-gray-500 hover:text-white font-semibold text-sm flex items-center gap-2 mb-8 transition-colors self-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    Exit Workspace
+                </button>
+
+                <h2 id="modal-title" class="text-3xl font-black text-white mb-4 leading-tight">Task Title</h2>
+                <div id="modal-tags" class="flex flex-wrap gap-2 mb-8"></div>
+                
+                <div class="bg-gradient-to-br from-lime-400/10 to-transparent p-6 rounded-2xl border border-lime-400/20 mb-8">
+                    <h4 class="text-lime-400 font-bold text-sm tracking-widest uppercase mb-3">Business Context</h4>
+                    <p id="modal-scenario" class="text-gray-300 text-base leading-relaxed"></p>
+                </div>
+
+                <h4 class="text-white font-bold text-lg mb-4">Acceptance Criteria</h4>
+                <ul id="modal-criteria" class="list-disc list-inside text-gray-400 space-y-2 mb-8 leading-relaxed"></ul>
+
+                <!-- ANTI-CHEAT INTERVIEW BOX -->
+                <div id="anti-cheat-box" class="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 mb-8 hidden">
+                    <div class="flex items-center gap-2 text-red-400 font-bold text-xl mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        Suspicious Activity
+                    </div>
+                    <span id="flag-reason-text" class="block text-red-300/80 text-xs font-bold uppercase tracking-wider mb-4">Reason</span>
+                    <p class="text-gray-300 text-sm mb-4">To verify your submission, the Senior AI Dev has a question about the code you just wrote:</p>
+                    <div id="anti-cheat-q" class="text-white text-base italic border-l-4 border-red-500 pl-4 py-1 mb-4">Q</div>
+                    <textarea id="anti-cheat-answer" class="form-input bg-black/50 mb-4" placeholder="Explain your thought process..." rows="3"></textarea>
+                    <button class="btn-new !bg-red-500 !text-white !border-red-400 hover:!shadow-red-500/50 w-full py-3" onclick="submitAntiCheatAnswer()">Submit Explanation</button>
+                </div>
+
+                <!-- RESULT BOX -->
+                <div id="ai-result" class="bg-white/5 border border-white/10 rounded-2xl p-6 hidden mt-auto">
+                    <div class="flex justify-between items-center mb-6 pb-6 border-b border-white/10">
+                        <span class="font-semibold text-gray-400 uppercase tracking-widest text-xs">Quality Score</span>
+                        <span id="result-score" class="text-4xl font-black text-lime-400 tracking-tighter">0/100</span>
+                    </div>
+                    <p id="result-text" class="text-gray-300 text-sm leading-relaxed mb-6"></p>
+                    
+                    <div id="portfolio-container" class="hidden mb-4">
+                        <button class="btn-secondary w-full py-3 !bg-white/10 hover:!bg-white/20 !border-white/20 !text-white" onclick="generatePortfolio()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            Generate Portfolio Case Study
+                        </button>
+                    </div>
+                    <button onclick="collectReward()" id="collect-btn" class="btn-new w-full py-4 text-lg">Keep Editing & Revise</button>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="editor-panel">
+                <div class="editor-header shrink-0">
+                    <div class="file-tabs" id="file-tabs"></div>
+                    <button class="add-file-btn" onclick="addNewFile()" title="Create new file">+</button>
+                    
+                    <div class="ml-auto px-5 py-3 flex items-center gap-4">
+                        <button class="text-xs font-semibold text-gray-500 hover:text-yellow-500 transition-colors border border-gray-700 hover:border-yellow-500/50 rounded-md px-3 py-1.5" id="emergency-toggle-btn" onclick="toggleEmergencyMode()" title="Use a simple text box if the multi-file editor acts up">⚠️ Fallback</button>
+                        <div class="text-xs font-bold text-lime-400 uppercase tracking-widest flex items-center gap-2">
+                            <span class="w-2 h-2 bg-lime-400 rounded-full shadow-[0_0_8px_#A3E635]"></span> Live Env
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="loading-overlay" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hidden">
+                    <div class="spinner mb-6"></div>
+                    <div id="loading-text" class="text-lime-400 font-bold tracking-widest uppercase">Reviewing PR...</div>
+                </div>
+                
+                <div class="editor-wrapper w-full relative">
+                    <textarea id="code-input" style="display:none;"></textarea>
+                    <textarea id="emergency-textarea" class="emergency-textarea" placeholder="// Emergency Fallback Mode activated.&#10;// Paste your entire code architecture here..."></textarea>
+                </div>
+                
+                <button class="btn-new !rounded-none !border-none !shadow-none py-5 text-lg shrink-0" id="submit-btn" onclick="submitSolution()">Submit PR for AI Review</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- POST TICKET MODAL                          -->
+    <!-- ========================================== -->
+    <div class="modal-overlay" id="post-modal">
+        <div class="modal-content glass-panel p-8 relative">
+            <button onclick="closeModal('post-modal')" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h2 class="text-3xl font-black text-white mb-2">Post to Forge</h2>
+            <p class="text-gray-400 mb-8">Share a real-world scenario with the community.</p>
+            
+            <div class="bg-lime-400/10 border border-lime-400/20 p-4 rounded-xl flex justify-between items-center mb-8">
+                <p class="text-sm text-lime-200 m-0">Out of ideas? Let AI draft a realistic ticket.</p>
+                <button type="button" class="btn-secondary !py-2 !px-4 text-xs !bg-transparent !text-lime-400 !border-lime-400/50 hover:!bg-lime-400 hover:!text-black" id="ai-gen-btn" onclick="generateAITicket(event)">✨ Draft</button>
+            </div>
+
+            <form id="post-ticket-form" class="space-y-5">
+                <div>
+                    <label class="form-label">Ticket Title</label>
+                    <input type="text" class="form-input" id="post-title" placeholder="e.g. Optimize React Re-renders" required>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">Domain</label>
+                        <select class="form-input appearance-none" id="post-domain">
+                            <option value="web">Web Development</option><option value="app">Mobile App</option>
+                            <option value="dsa">DSA & Logic</option><option value="aiml">AI / ML</option>
+                            <option value="devops">DevOps & Cloud</option><option value="data">Data Science</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Difficulty</label>
+                        <select class="form-input appearance-none" id="post-difficulty">
+                            <option value="easy">Easy</option><option value="med">Medium</option><option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><label class="form-label">Tech Stack (CSV)</label><input type="text" class="form-input" id="post-tech" placeholder="React, Node" required></div>
+                    <div><label class="form-label">XP Reward (100-1000)</label><input type="number" class="form-input" id="post-xp" value="250" min="100" max="1000" required></div>
+                </div>
+                <div>
+                    <label class="form-label">Business Context</label>
+                    <textarea class="form-input" id="post-scenario" rows="3" placeholder="Describe the bug or feature request..." required></textarea>
+                </div>
+                <div>
+                    <label class="form-label">Acceptance Criteria (One per line)</label>
+                    <textarea class="form-input" id="post-criteria" rows="3" placeholder="Must load under 2s..." required></textarea>
+                </div>
+                <button type="submit" class="btn-new w-full py-4 text-lg mt-4">Publish Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PORTFOLIO MODAL                            -->
+    <!-- ========================================== -->
+    <div class="modal-overlay" id="portfolio-modal">
+        <div class="modal-content glass-panel p-8 relative max-w-3xl">
+            <button onclick="closeModal('portfolio-modal')" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h2 class="text-3xl font-black text-white mb-2">Proof of Work</h2>
+            <p class="text-gray-400 mb-8">Copy this AI-generated case study to your GitHub or LinkedIn.</p>
+            
+            <textarea class="form-input font-mono text-sm leading-relaxed" id="portfolio-content" rows="12" readonly></textarea>
+            
+            <button class="btn-new w-full py-4 mt-6 text-lg" onclick="copyPortfolio()">📋 Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <div id="toast-notification" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const API_KEY = "AIzaSyA_wj1Ql_IaavQNfLPGYBNHjn4n9JiarzE"; // ⚠️ YOUR GEMINI API KEY GOES HERE
+        
+        // --- MATCHING YOUR DASHBOARD FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3euFCtckrdkhxcwQw28PWooUoOycTSdU",
+            authDomain: "pathfinder-ai-87d22.firebaseapp.com",
+            projectId: "pathfinder-ai-87d22",
+            storageBucket: "pathfinder-ai-87d22.appspot.com",
+            messagingSenderId: "254163992794",
+            appId: "1:254163992794:web:d34104f34142acac5be5e3",
+            measurementId: "G-ECJB4EMM1X"
+        };
+        const appId = 'default-app-id'; // Match dashboard exactly
+
+        let db, auth, currentUser;
+        let allTickets = [];
+        let currentProject = null;
+        let mobileSigninLink;
+
+        // --- AUTH GATE SYSTEM ---
+        window.requireAuth = function(event) {
+            if (!currentUser || currentUser.isAnonymous) {
+                if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                showToast("Please sign in to access Forge features.", true);
+                setTimeout(() => { window.location.href = 'signin.html?redirect=projects.html'; }, 1500);
+                return false;
+            }
+            return true;
+        };
+
+        // --- STATE: User & Trackers ---
+        // Using dynamically scoped local storage keys based on UID for full state isolation
+        const fallbackId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let activeUserId = localStorage.getItem('forge_user_id') || fallbackId;
+        localStorage.setItem('forge_user_id', activeUserId);
+        
+        function getUserId() { return currentUser ? currentUser.uid : activeUserId; }
+
+        let editor = null;
+        let workspaceFiles = [];
+        let activeFileIndex = 0;
+        let emergencyMode = false;
+        
+        let sessionStart = 0, pastedChars = 0, tabSwitches = 0, timeOffTab = 0, lastBlur = 0, isFlagged = false, flagReason = "", acQuestion = "";
+        
+        // Initialize state variables explicitly
+        window.userXP = 0;
+        window.userStreak = 0;
+        let lastActivityDate = '';
+        let solvedTickets = [];
+        let isGraded = false;
+
+        function loadLocalState(uid) {
+            window.userXP = parseInt(localStorage.getItem(`forge_xp_${uid}`)) || 0;
+            window.userStreak = parseInt(localStorage.getItem(`forge_streak_${uid}`)) || 0;
+            lastActivityDate = localStorage.getItem(`forge_activity_${uid}`) || '';
+            solvedTickets = JSON.parse(localStorage.getItem(`forge_solved_${uid}`)) || [];
+            if(window.updateHeaderGamification) window.updateHeaderGamification();
+        }
+
+        function saveLocalState(uid) {
+            localStorage.setItem(`forge_xp_${uid}`, window.userXP);
+            localStorage.setItem(`forge_streak_${uid}`, window.userStreak);
+            localStorage.setItem(`forge_activity_${uid}`, lastActivityDate);
+            localStorage.setItem(`forge_solved_${uid}`, JSON.stringify(solvedTickets));
+        }
+
+        // Gamification Helpers
+        function getRank(xp) {
+            if (xp < 1000) return { name: "Junior Dev", color: "text-purple-400", icon: "🌱", hex: "#a855f7" };
+            if (xp < 2500) return { name: "Mid-Level", color: "text-blue-500", icon: "🛠️", hex: "#3b82f6" };
+            if (xp < 5000) return { name: "Senior Dev", color: "text-yellow-500", icon: "⚡", hex: "#eab308" };
+            if (xp < 10000) return { name: "Staff Eng", color: "text-red-500", icon: "🔥", hex: "#ef4444" };
+            return { name: "Principal", color: "text-lime-400", icon: "👑", hex: "#a3e635" };
+        }
+
+        window.updateHeaderGamification = () => {
+            const rankInfo = getRank(window.userXP);
+
+            const rankEl = document.getElementById('header-rank-text');
+            const rankIconEl = document.getElementById('header-rank-icon');
+            const streakEl = document.getElementById('header-streak');
+            const xpEl = document.getElementById('header-xp');
+
+            if(rankEl) {
+                rankEl.textContent = rankInfo.name; 
+                rankEl.className = `font-bold ${rankInfo.color}`;
+                rankIconEl.textContent = rankInfo.icon;
+                streakEl.textContent = window.userStreak + (window.userStreak === 1 ? " Day" : " Days");
+                xpEl.textContent = window.userXP.toLocaleString() + " XP";
+            }
+        };
+
+        // Make functions global
+        window.setFilter = (filter, btn) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'bg-lime-400', 'text-black'));
+            document.querySelectorAll('.filter-btn').forEach(b => { b.classList.add('bg-white/5', 'text-gray-400'); });
+            
+            btn.classList.remove('bg-white/5', 'text-gray-400');
+            btn.classList.add('active', 'bg-lime-400', 'text-black');
+            
+            window.currentFilter = filter;
+            renderStudentGrid();
+        }
+        window.currentFilter = 'all';
+
+        function checkStreak() {
+            const today = new Date().toISOString().split('T')[0];
+            if (lastActivityDate) {
+                const lastDate = new Date(lastActivityDate);
+                const currentDate = new Date(today);
+                const diffTime = Math.abs(currentDate - lastDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                if (diffDays > 1) { 
+                    window.userStreak = 0; 
+                    saveLocalState(getUserId()); 
+                }
+            }
+            window.updateHeaderGamification();
+        }
+        
+        function recordActivity() {
+            const today = new Date().toISOString().split('T')[0];
+            if (lastActivityDate !== today) {
+                if (lastActivityDate) {
+                    const lastDate = new Date(lastActivityDate);
+                    const currentDate = new Date(today);
+                    const diffTime = Math.abs(currentDate - lastDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                    if (diffDays === 1) window.userStreak++; else window.userStreak = 1;
+                } else { window.userStreak = 1; }
+                lastActivityDate = today;
+                saveLocalState(getUserId());
+            }
+        }
+
+        // --- LOCAL DRAFT SAVING SYSTEM ---
+        function saveDraft() {
+            if (currentProject) {
+                if (editor && !emergencyMode) workspaceFiles[activeFileIndex].content = editor.getValue();
+                localStorage.setItem(`forge_draft_${currentProject.id}`, JSON.stringify(workspaceFiles));
+            }
+        }
+
+        // --- FEEDBACK MODAL LOGIC ---
+        let currentRating = 0;
+        
+        window.openFeedbackModal = function(event) {
+            if (!window.requireAuth(event)) return;
+            document.getElementById('feedback-modal').classList.add('visible');
+            document.getElementById('feedback-backdrop').classList.add('visible');
+        };
+
+        window.closeFeedbackModal = function() {
+            document.getElementById('feedback-modal').classList.remove('visible');
+            document.getElementById('feedback-backdrop').classList.remove('visible');
+            currentRating = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+            document.getElementById('feedback-text').value = '';
+        };
+
+        document.querySelectorAll('.star').forEach(star => {
+            star.onclick = function() {
+                currentRating = this.getAttribute('data-value');
+                document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+                this.classList.add('active'); 
+            };
+        });
+
+        window.submitFeedback = async function(event) {
+            if (!window.requireAuth(event)) return;
+            
+            const text = document.getElementById('feedback-text').value.trim();
+            const btn = document.getElementById('submit-feedback-btn');
+
+            if (currentRating === 0) {
+                showToast("Please select a star rating first!", true);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Sending...";
+
+            try {
+                // FIXED: Changed the collection path to adhere to strict Firestore security rules
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forge_feedback'), {
+                    rating: Number(currentRating),
+                    feedback: text,
+                    userId: getUserId(),
+                    timestamp: new Date()
+                });
+
+                btn.innerText = "Thank You!";
+                setTimeout(() => {
+                    closeFeedbackModal();
+                    btn.innerText = "Submit Feedback";
+                    btn.disabled = false;
+                    showToast("Feedback sent. Thank you!", false);
+                }, 1500);
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showToast("Failed to send feedback!", true);
+                btn.innerText = "Submit Feedback";
+                btn.disabled = false;
+            }
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const uid = getUserId();
+            loadLocalState(uid);
+            checkStreak(); 
+            
+            // Mobile Menu Logic
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const closeMenuBtn = document.getElementById('close-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            mobileSigninLink = document.getElementById('mobile-signin-link');
+
+            function toggleMobileMenu() {
+                const isMenuOpen = mobileMenu.classList.contains('opacity-100');
+                if (isMenuOpen) {
+                    mobileMenu.classList.remove('opacity-100', 'pointer-events-auto');
+                    mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+                    document.body.style.overflow = '';
+                } else {
+                    mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+                    mobileMenu.classList.add('opacity-100', 'pointer-events-auto');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            if (closeMenuBtn) closeMenuBtn.addEventListener('click', toggleMobileMenu);
+            if (mobileLinks) mobileLinks.forEach(link => link.addEventListener('click', toggleMobileMenu));
+            
+            // 1. Cinematic Splash Logic
+            const splash = document.getElementById('cinematic-splash');
+            if (!localStorage.getItem('forge_movie_splash')) {
+                // Lock scrolling
+                document.body.style.overflow = 'hidden';
+                
+                // Allow animation to play (4.5s) then fade out
+                setTimeout(() => {
+                    splash.classList.add('fade-out');
+                    document.body.style.overflow = 'auto';
+                    localStorage.setItem('forge_movie_splash', 'true');
+                    setTimeout(() => splash.remove(), 1000);
+                }, 4000);
+            } else {
+                splash.remove(); 
+            }
+
+            // 2. CodeMirror Initialization
+            editor = CodeMirror.fromTextArea(document.getElementById("code-input"), {
+                mode: "javascript",
+                theme: "dracula",
+                lineNumbers: true,
+                autoCloseBrackets: true,
+                indentUnit: 4,
+                tabSize: 4,
+                indentWithTabs: false,
+                lineWrapping: true
+            });
+            
+            editor.on("change", (cm, change) => {
+                if (change.origin === "paste") pastedChars += change.text.join('\n').length;
+                saveDraft(); // Auto-save draft on type
+            });
+            
+            document.getElementById('emergency-textarea').addEventListener('paste', (e) => {
+                pastedChars += (e.clipboardData || window.clipboardData).getData('text').length;
+            });
+            
+            document.getElementById('emergency-textarea').addEventListener('input', (e) => {
+                if (currentProject) {
+                    workspaceFiles[0].content = e.target.value;
+                    localStorage.setItem(`forge_draft_${currentProject.id}`, JSON.stringify(workspaceFiles));
+                }
+            });
+        });
+
+        // --- MULTI-FILE & DYNAMIC TEMPLATES ---
+        function getInitialFiles(type) {
+            const techStr = (currentProject && currentProject.tech) ? currentProject.tech.join(' ').toLowerCase() : '';
+            
+            switch(type) {
+                case 'web': return [
+                    { name: 'App.jsx', content: 'export default function App() {\n    return (\n        <div>\n            <h1>Hello World</h1>\n        </div>\n    );\n}' },
+                    { name: 'styles.css', content: '/* Add your CSS styles here */\nbody {\n    margin: 0;\n    font-family: sans-serif;\n}' }
+                ];
+                case 'app':
+                    if (techStr.includes('react') || techStr.includes('expo')) {
+                        return [{ name: 'App.tsx', content: 'import React from "react";\nimport { View, Text } from "react-native";\n\nexport default function App() {\n    return (\n        <View>\n            <Text>Hello Mobile App!</Text>\n        </View>\n    );\n}' }];
+                    } else if (techStr.includes('flutter') || techStr.includes('dart')) {
+                        return [{ name: 'main.dart', content: 'import \'package:flutter/material.dart\';\n\nvoid main() {\n  runApp(MyApp());\n}' }];
+                    } else if (techStr.includes('swift') || techStr.includes('ios')) {
+                        return [{ name: 'ContentView.swift', content: 'import SwiftUI\n\nstruct ContentView: View {\n    var body: some View {\n        Text("Hello, iOS!")\n    }\n}' }];
+                    } else {
+                        return [{ name: 'MainActivity.kt', content: 'package com.example.app\n\n// Add Android code here' }];
+                    }
+                case 'aiml': return [{ name: 'model.py', content: 'import numpy as np\nimport pandas as pd\n\n# Build your AI model logic here\ndef train_model():\n    pass' }];
+                case 'devops': return [{ name: 'Dockerfile', content: '# Base image\nFROM ubuntu:latest\n\n# Setup configurations' }];
+                case 'data': return [
+                    { name: 'analysis.py', content: 'import pandas as pd\n\n# Data analysis logic' },
+                    { name: 'query.sql', content: '-- Write your SQL query here\nSELECT * FROM data;' }
+                ];
+                case 'dsa': return [
+                    { name: 'Solution.java', content: 'class Solution {\n    public void solve() {\n        // Your logic here\n    }\n}' },
+                    { name: 'Solution.py', content: 'def solve():\n    # Your logic here\n    pass' }
+                ];
+                default: return [{ name: 'solution.js', content: '// Write your code here...' }];
+            }
+        }
+
+        function getModeForFile(filename) {
+            if (!filename) return 'javascript';
+            const name = filename.toLowerCase();
+            if (name.endsWith('.py')) return 'python';
+            if (name.endsWith('.css')) return 'css';
+            if (name.endsWith('.html')) return 'xml';
+            if (name.endsWith('.java') || name.endsWith('.cpp') || name.endsWith('.kt') || name.endsWith('.c')) return 'text/x-java';
+            return 'javascript';
+        }
+
+        function renderTabs() {
+            const tabsContainer = document.getElementById('file-tabs');
+            tabsContainer.innerHTML = '';
+            
+            workspaceFiles.forEach((file, index) => {
+                const isActive = index === activeFileIndex;
+                const tab = document.createElement('div');
+                tab.className = `file-tab ${isActive ? 'active' : ''}`;
+                tab.onclick = () => window.switchTab(index);
+                
+                let closeBtn = workspaceFiles.length > 1 ? `<span class="tab-close" onclick="event.stopPropagation(); window.deleteFile(${index})">&times;</span>` : '';
+                tab.innerHTML = `${file.name} ${closeBtn}`;
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        window.switchTab = (index) => {
+            if (editor && activeFileIndex !== index) {
+                workspaceFiles[activeFileIndex].content = editor.getValue(); 
+                activeFileIndex = index; 
+                editor.setOption("mode", getModeForFile(workspaceFiles[activeFileIndex].name));
+                editor.setValue(workspaceFiles[activeFileIndex].content); 
+                renderTabs();
+                saveDraft();
+            }
+        };
+
+        window.addNewFile = () => {
+            const fileName = prompt("Enter new file name (e.g., utils.js, App.jsx):", `file${workspaceFiles.length + 1}.js`);
+            if (fileName && fileName.trim() !== '') {
+                if (editor) workspaceFiles[activeFileIndex].content = editor.getValue();
+                workspaceFiles.push({ name: fileName.trim(), content: '// New file\n' });
+                activeFileIndex = workspaceFiles.length - 1;
+                renderTabs();
+                if (editor) {
+                    editor.setOption("mode", getModeForFile(workspaceFiles[activeFileIndex].name));
+                    editor.setValue(workspaceFiles[activeFileIndex].content);
+                    editor.focus();
+                }
+                saveDraft();
+            }
+        };
+
+        window.deleteFile = (index) => {
+            if (workspaceFiles.length <= 1) return;
+            if (confirm(`Delete ${workspaceFiles[index].name}?`)) {
+                if (index === activeFileIndex) {
+                    let newIndex = index === 0 ? 1 : index - 1;
+                    window.switchTab(newIndex);
+                    if (newIndex > index) activeFileIndex--; 
+                } else if (index < activeFileIndex) {
+                    activeFileIndex--;
+                }
+                workspaceFiles.splice(index, 1);
+                renderTabs();
+                saveDraft();
+            }
+        };
+
+        window.toggleEmergencyMode = () => {
+            emergencyMode = !emergencyMode;
+            const cmWrapper = editor.getWrapperElement();
+            const emTextArea = document.getElementById('emergency-textarea');
+            const tabs = document.getElementById('file-tabs');
+            const addBtn = document.querySelector('.add-file-btn');
+            const emBtn = document.getElementById('emergency-toggle-btn');
+            
+            if (emergencyMode) {
+                cmWrapper.style.display = 'none'; tabs.style.display = 'none'; addBtn.style.display = 'none';
+                emTextArea.style.display = 'block';
+                emBtn.classList.add('text-yellow-500', 'border-yellow-500');
+                emBtn.classList.remove('text-gray-500', 'border-gray-700');
+                if (emTextArea.value.trim() === '') emTextArea.value = getCombinedCode(true); 
+            } else {
+                cmWrapper.style.display = 'block'; tabs.style.display = 'flex'; addBtn.style.display = 'flex';
+                emTextArea.style.display = 'none';
+                emBtn.classList.remove('text-yellow-500', 'border-yellow-500');
+                emBtn.classList.add('text-gray-500', 'border-gray-700');
+                editor.refresh();
+            }
+        };
+
+        function getCombinedCode(ignoreEmergency = false) {
+            if (emergencyMode && !ignoreEmergency) return document.getElementById('emergency-textarea').value.trim();
+            if (editor) workspaceFiles[activeFileIndex].content = editor.getValue();
+            return workspaceFiles.map(f => `// --- File: ${f.name} ---\n${f.content}`).join('\n\n');
+        }
+
+        // --- UI HELPERS ---
+        window.closeModal = (id) => { document.getElementById(id).classList.remove('open'); document.body.style.overflow = 'auto'; };
+        window.openPostModal = (event) => {
+            if (!window.requireAuth(event)) return;
+            document.getElementById('post-modal').classList.add('open'); document.body.style.overflow = 'hidden';
+            const domains = ['web', 'app', 'dsa', 'aiml', 'devops', 'data']; const diffs = ['easy', 'med', 'hard'];
+            document.getElementById('post-domain').value = domains[Math.floor(Math.random() * domains.length)];
+            document.getElementById('post-difficulty').value = diffs[Math.floor(Math.random() * diffs.length)];
+        };
+        window.openRulesModal = () => { document.getElementById('rules-modal').classList.add('open'); document.body.style.overflow = 'hidden'; };
+        
+        let toastTimer;
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-notification');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isError) toast.classList.add('error'); else toast.classList.remove('error');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // --- FIREBASE SETUP ---
+        async function initFirebase() {
+            // Check if Candidate Mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const wsParam = urlParams.get('workspace');
+            if (wsParam) {
+                document.querySelector('.hero').style.display = 'none';
+                document.querySelector('.filter-bar').style.display = 'none';
+                document.getElementById('public-tickets-grid').innerHTML = `
+                    <div style="grid-column: 1/-1;" class="flex items-center justify-center min-h-[60vh]">
+                        <div class="glass-panel p-12 text-center flex flex-col items-center">
+                             <div class="spinner mb-6"></div>
+                             <h2 class="text-2xl font-bold text-white">Loading Workspace...</h2>
+                             <p class="text-gray-400 mt-2">Preparing your secure assessment environment.</p>
+                        </div>
+                    </div>`;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app); 
+                db = getFirestore(app);
+
+                onAuthStateChanged(auth, user => { 
+                    if (user) {
+                        currentUser = user;
+                        const uid = getUserId();
+                        
+                        // Load isolated local state for this specific user
+                        loadLocalState(uid); 
+                        checkStreak(); // Verify and update UI immediately
+                        
+                        const headerProfileLink = document.getElementById('header-profile-link');
+                        const headerSigninLink = document.getElementById('header-signin-link');
+                        
+                        if (!user.isAnonymous) {
+                            headerProfileLink.classList.remove('hidden'); 
+                            headerSigninLink.classList.remove('md:flex');
+                            headerSigninLink.classList.add('hidden');
+                            if(mobileSigninLink) mobileSigninLink.classList.add('hidden');
+                            
+                            // Listen to Firestore for real-time gamification sync across tabs/devices
+                            const userDocRef = doc(db, 'artifacts', appId, 'users', user.uid);
+                            onSnapshot(userDocRef, (docSnap) => {
+                                if (docSnap.exists()) {
+                                    const data = docSnap.data();
+                                    if (data.xp !== undefined) window.userXP = data.xp;
+                                    if (data.streak !== undefined) window.userStreak = data.streak;
+                                    if (data.solvedTickets !== undefined) solvedTickets = data.solvedTickets;
+                                    if (data.lastLogin) lastActivityDate = data.lastLogin.toDate().toISOString().split('T')[0];
+                                    
+                                    saveLocalState(uid); // Override local cache with authoritative cloud data
+                                    window.updateHeaderGamification();
+                                    renderStudentGrid(); // Refresh grid to reflect new solved tickets
+                                } else {
+                                    setDoc(userDocRef, {
+                                        xp: window.userXP,
+                                        streak: window.userStreak,
+                                        lastLogin: new Date(),
+                                        solvedTickets: solvedTickets
+                                    }, { merge: true });
+                                }
+                            });
+
+                        } else {
+                            headerProfileLink.classList.add('hidden'); 
+                            headerSigninLink.classList.add('md:flex');
+                            headerSigninLink.classList.remove('hidden');
+                            if(mobileSigninLink) mobileSigninLink.classList.remove('hidden');
+                        }
+                        setupTicketListener(wsParam); 
+                    } else {
+                        // Ensure anonymous login works if not signed in, so guest users can test the Forge
+                        signInAnonymously(auth).catch(console.error);
+                    }
+                });
+            } catch (err) { console.error("Firebase init error:", err); }
+        }
+
+        function setupTicketListener(wsParam) {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'forge_tickets'), (snapshot) => {
+                const fetched = [];
+                snapshot.forEach(doc => fetched.push({ id: doc.id, ...doc.data() }));
+                allTickets = fetched.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                
+                if (wsParam) {
+                    const wsTicket = allTickets.find(t => t.id === wsParam);
+                    if (wsTicket) setTimeout(() => openProject(wsParam), 500);
+                    else document.getElementById('public-tickets-grid').innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 100px; color: #ef4444; font-size: 1.5rem; font-weight: 600;">Assessment not found or expired.</div>';
+                } else {
+                    renderStudentGrid();
+                }
+            });
+        }
+
+        // --- TICKET DELETION ---
+        window.deleteTicket = async (id, event) => {
+            if (!window.requireAuth(event)) return;
+            event.stopPropagation();
+            if(!confirm("Are you sure you want to delete your generated ticket?")) return;
+            
+            try { 
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'forge_tickets', id)); 
+                showToast("Ticket deleted!"); 
+            } catch (err) { console.error(err); showToast("Failed to delete.", true); } 
+        };
+
+        function renderStudentGrid() {
+            const grid = document.getElementById('public-tickets-grid'); grid.innerHTML = '';
+            let publicTickets = allTickets.filter(t => !t.isWorkspace);
+            if (window.currentFilter !== 'all') publicTickets = publicTickets.filter(t => t.type === window.currentFilter);
+            
+            if(publicTickets.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1;" class="flex flex-col items-center justify-center p-16 glass-panel text-center border-dashed border-2 border-gray-800">
+                        <div class="text-6xl mb-4 opacity-50 grayscale">🏗️</div>
+                        <h3 class="text-2xl font-bold text-white mb-2">The Forge is Empty</h3>
+                        <p class="text-gray-400 mb-6 max-w-md">No community tickets found for this domain. Be the first to forge a challenge.</p>
+                        <button onclick="document.getElementById('hero-prompt').focus()" class="text-lime-400 hover:text-white transition-colors font-semibold">Generate a Ticket &rarr;</button>
+                    </div>`;
+                return;
+            }
+
+            publicTickets.forEach(p => {
+                let badgeClass = p.difficulty === 'hard' ? 'tag-hard' : p.difficulty === 'med' ? 'tag-med' : 'tag-easy';
+                const techHtml = (p.tech || []).slice(0, 3).map(t => `<span class="forge-tag tag-tech">${t.trim()}</span>`).join('');
+                
+                const isOwner = p.createdBy === getUserId();
+                const isSolved = solvedTickets.includes(p.id);
+                const deleteBtnHtml = isOwner ? `<button title="Delete your ticket" onclick="deleteTicket('${p.id}', event)" class="delete-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` : '';
+
+                grid.innerHTML += `
+                    <div class="forge-card group cursor-pointer" onclick="openProject('${p.id}', event)">
+                        ${deleteBtnHtml}
+                        <div class="mb-4 flex flex-wrap gap-2">
+                            <span class="forge-tag ${badgeClass}">${p.difficulty}</span>
+                            ${techHtml}
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3 pr-8 group-hover:text-lime-300 transition-colors">${p.title}</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">${p.scenario || ''}</p>
+                        <div class="mt-auto pt-4 border-t border-white/5 flex justify-between items-center">
+                            ${isSolved 
+                                ? `<span class="text-gray-500 font-bold text-sm flex items-center gap-1">⚡ +${p.xp || 250} XP</span>
+                                   <span class="text-sm font-bold text-lime-400 flex items-center gap-1">Solved <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></span>` 
+                                : `<span class="text-lime-400 font-bold text-sm flex items-center gap-1">⚡ +${p.xp || 250} XP</span>
+                                   <span class="text-sm font-semibold text-white group-hover:translate-x-1 transition-transform">Solve &rarr;</span>`
+                            }
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // --- WORKSPACE LAUNCHER ---
+        window.openProject = (id, event) => {
+            if (!window.requireAuth(event)) return;
+            currentProject = allTickets.find(t => t.id === id); if(!currentProject) return;
+            const isSolved = solvedTickets.includes(currentProject.id);
+            
+            sessionStart = Date.now(); pastedChars = 0; tabSwitches = 0; timeOffTab = 0; lastBlur = 0; isFlagged = false; flagReason = ""; isGraded = false;
+            
+            // Check for Local Auto-Save Draft
+            const savedDraft = localStorage.getItem(`forge_draft_${id}`);
+            if (savedDraft) {
+                try {
+                    workspaceFiles = JSON.parse(savedDraft);
+                } catch(e) {
+                    workspaceFiles = getInitialFiles(currentProject.type);
+                }
+            } else {
+                workspaceFiles = getInitialFiles(currentProject.type);
+            }
+            
+            activeFileIndex = 0;
+            emergencyMode = false;
+
+            document.getElementById('modal-title').innerText = currentProject.title;
+            document.getElementById('modal-scenario').innerText = currentProject.scenario;
+            
+            let badgeClass = currentProject.difficulty === 'hard' ? 'tag-hard' : currentProject.difficulty === 'med' ? 'tag-med' : 'tag-easy';
+            let tagsHtml = `<span class="forge-tag ${badgeClass}">${currentProject.difficulty}</span>`;
+            tagsHtml += (currentProject.tech||[]).map(t => `<span class="forge-tag tag-tech">${t}</span>`).join('');
+            document.getElementById('modal-tags').innerHTML = tagsHtml;
+            
+            document.getElementById('modal-criteria').innerHTML = (currentProject.criteria||[]).map(c => `<li>${c}</li>`).join('');
+            
+            document.getElementById('ai-result').style.display = 'none';
+            document.getElementById('anti-cheat-box').style.display = 'none'; 
+            
+            // Explicitly reset the Anti-Cheat UI State
+            document.getElementById('anti-cheat-answer').value = '';
+            const antiCheatBtn = document.querySelector('#anti-cheat-box button');
+            if (antiCheatBtn) {
+                antiCheatBtn.disabled = false;
+                antiCheatBtn.innerText = "Submit Explanation";
+            }
+            
+            const btn = document.getElementById('submit-btn');
+            if (isSolved) {
+                btn.disabled = true;
+                btn.innerHTML = "Already Solved ✅";
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                btn.disabled = false; 
+                btn.innerHTML = "Submit PR for AI Review";
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            document.getElementById('emergency-textarea').style.display = 'none';
+            document.getElementById('emergency-textarea').value = '';
+            document.getElementById('file-tabs').style.display = 'flex';
+            document.querySelector('.add-file-btn').style.display = 'flex';
+            
+            const emBtn = document.getElementById('emergency-toggle-btn');
+            emBtn.classList.remove('text-yellow-500', 'border-yellow-500');
+            emBtn.classList.add('text-gray-500', 'border-gray-700');
+            
+            document.getElementById('workspace-modal').classList.add('open'); document.body.style.overflow = 'hidden';
+            
+            renderTabs();
+            if(editor) {
+                editor.getWrapperElement().style.display = 'block';
+                editor.setOption("mode", getModeForFile(workspaceFiles[0].name));
+                editor.setValue(workspaceFiles[0].content);
+                setTimeout(() => { editor.refresh(); editor.focus(); }, 150);
+            }
+        };
+
+        // Anti-Cheat Sensors
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) { lastBlur = Date.now(); tabSwitches++; } else if (lastBlur > 0) { timeOffTab += (Date.now() - lastBlur); lastBlur = 0; }
+        });
+
+        window.submitSolution = async () => {
+            const combinedCode = getCombinedCode();
+            if (combinedCode.length < 30) return showToast("Code is too short to review.", true);
+            if (!API_KEY) return showToast("API Key Missing! Set 'API_KEY' at the top of the script.", true);
+            
+            saveDraft(); // Save before submitting
+            
+            // Clear previous anti-cheat text state
+            document.getElementById('anti-cheat-answer').value = '';
+
+            const btn = document.getElementById('submit-btn'); const overlay = document.getElementById('loading-overlay');
+            const activeTime = Math.max(1, ((Date.now() - sessionStart) / 1000) - (timeOffTab / 1000));
+            
+            flagReason = "";
+            if (pastedChars > combinedCode.length * 0.4 && combinedCode.length > 50) flagReason = "Massive Paste Detected";
+            else if (combinedCode.length / activeTime > 15 && pastedChars === 0) flagReason = "Inhuman Typing Speed";
+            else if (tabSwitches >= 2 && timeOffTab > 10000) flagReason = "Tab Switching Detected";
+
+            if (flagReason !== "") {
+                isFlagged = true; btn.disabled = true; overlay.classList.remove('hidden'); document.getElementById('loading-text').innerText = "Analyzing Activity...";
+                const prompt = `User flagged for: "${flagReason}". Code: ${combinedCode.substring(0, 500)}. Ask ONE specific technical question about this code to prove they wrote it. Max 2 sentences.`;
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    const data = await res.json(); acQuestion = data.candidates[0].content.parts[0].text;
+                    overlay.classList.add('hidden'); document.getElementById('flag-reason-text').innerText = `Flag: ${flagReason}`;
+                    document.getElementById('anti-cheat-q').innerText = acQuestion; document.getElementById('anti-cheat-box').classList.remove('hidden');
+                    document.getElementById('anti-cheat-box').style.display = 'block';
+                    return; 
+                } catch (e) { console.error(e); overlay.classList.add('hidden'); btn.disabled=false; }
+            }
+            await executeAIGrading(combinedCode, btn, overlay);
+        };
+
+        window.submitAntiCheatAnswer = async () => {
+            const answer = document.getElementById('anti-cheat-answer').value.trim();
+            if(answer.length < 10) return showToast("Explanation too short.", true);
+            
+            const btn = document.querySelector('#anti-cheat-box button');
+            btn.disabled = true; btn.innerText = "Verifying...";
+            
+            const prompt = `Flagged for: ${flagReason}. Q: ${acQuestion}. Ans: ${answer}. Code: ${getCombinedCode().substring(0,200)}. Did they explain correctly? ONLY "PASS" or "FAIL".`;
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const text = (await res.json()).candidates[0].content.parts[0].text;
+                if(text.includes("PASS")) {
+                    isFlagged = false; 
+                    document.getElementById('anti-cheat-box').style.display = 'none'; 
+                    showToast("Verification Passed!");
+                    btn.disabled = false; btn.innerText = "Submit Explanation";
+                    await executeAIGrading(getCombinedCode(), document.getElementById('submit-btn'), document.getElementById('loading-overlay'));
+                } else { 
+                    showToast("Verification Failed. Logic mismatch.", true); 
+                    btn.disabled = false; 
+                    btn.innerText = "Submit Explanation"; 
+                }
+            } catch(e) { 
+                console.error(e); 
+                btn.disabled = false; 
+                btn.innerText = "Submit Explanation"; 
+            }
+        };
+
+        async function executeAIGrading(code, btn, overlay) {
+            btn.disabled = true; overlay.classList.remove('hidden'); document.getElementById('loading-text').innerText = "AI Reviewing...";
+            
+            // STRICT LANGUAGE REQUIREMENT ADDED TO AI PROMPT
+            const prompt = `Review PR for Ticket: ${currentProject.title}. 
+Required Tech Stack: ${(currentProject.tech || []).join(', ')}. 
+Criteria: ${currentProject.criteria.join(', ')}. 
+Code Architecture submitted: \n${code}\n\n 
+CRITICAL RULE: You are an absolute strict grader. You MUST strictly evaluate if the submitted code language/syntax exactly aligns with the Required Tech Stack. If the user submits Kotlin/Java for a React/Web task, or Python for an HTML/CSS task, or any other mismatched language, you MUST immediately FAIL them with a score of 0 and explain the language mismatch in the feedback. Do not grade the logic if the language is wrong. 
+Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
+            
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
+                });
+                const result = JSON.parse((await res.json()).candidates[0].content.parts[0].text);
+                
+                document.getElementById('result-score').innerText = `${result.score}/100`;
+                document.getElementById('result-score').className = `text-4xl font-black tracking-tighter ${result.score >= 70 ? 'text-lime-400' : 'text-red-500'}`;
+                document.getElementById('result-text').innerText = result.feedback;
+                document.getElementById('ai-result').style.display = 'block';
+                document.getElementById('portfolio-container').style.display = result.score >= 70 ? 'block' : 'none';
+                overlay.classList.add('hidden'); btn.innerText = "PR REVIEW COMPLETE";
+
+                if(result.score >= 70) {
+                    isGraded = true;
+                    document.getElementById('collect-btn').innerText = "Merge & Collect XP";
+                } else {
+                    isGraded = false;
+                    document.getElementById('collect-btn').innerText = "Keep Editing & Revise"; 
+                }
+            } catch(e) { console.error(e); overlay.classList.add('hidden'); btn.disabled=false; showToast("API Error", true); }
+        }
+
+        // --- GENERATION & POSTING ---
+        window.generateFromHero = async (event) => {
+            if (!window.requireAuth(event)) return;
+            if (!API_KEY) return showToast("API Key Missing!", true);
+            const btn = document.getElementById('hero-gen-btn'); const req = document.getElementById('hero-prompt').value;
+            const typeValue = document.getElementById('hero-domain').value; const diffValue = document.getElementById('hero-difficulty').value;
+            if(!req.trim()) return showToast("Please describe what you want to build.", true);
+            
+            btn.disabled = true; btn.innerHTML = "⏳";
+            const prompt = `Create a ${diffValue} difficulty JSON ticket based on: "${req}". Schema: {"title":"", "tech":[""], "scenario":"", "criteria":[""], "xp": 250}`;
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
+                const ticket = JSON.parse((await res.json()).candidates[0].content.parts[0].text);
+                const newTicket = { ...ticket, difficulty: diffValue, type: typeValue, isWorkspace: false, createdAt: Date.now(), createdBy: getUserId() };
+                
+                try { 
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forge_tickets'), newTicket); 
+                    showToast("Ticket posted live!"); 
+                } catch (err) { 
+                    console.error(err); 
+                    showToast("Failed to post ticket.", true); 
+                }
+                
+                document.getElementById('hero-prompt').value = ''; showToast("Ticket forged successfully!");
+                const filterBtn = document.querySelector(`.filter-btn[onclick*="'${typeValue}'"]`);
+                if(filterBtn) setFilter(typeValue, filterBtn);
+            } catch(e) { console.error(e); showToast("Failed to forge ticket", true); } finally { btn.disabled = false; btn.innerHTML = "Generate"; }
+        };
+
+        window.generateAITicket = async (event) => {
+            if (!window.requireAuth(event)) return;
+            if (!API_KEY) return showToast("API Key Missing!", true);
+            const btn = document.getElementById('ai-gen-btn'); btn.disabled = true; btn.innerHTML = "⏳ Drafting...";
+            const prompt = `Create a realistic Jira ticket. Return JSON: {"title": "Title", "tech": ["T1"], "scenario": "Desc", "criteria": ["C1"]}`;
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
+                const data = await res.json(); const aiTicket = JSON.parse(data.candidates[0].content.parts[0].text);
+                document.getElementById('post-title').value = aiTicket.title; document.getElementById('post-tech').value = (aiTicket.tech || []).join(', ');
+                document.getElementById('post-scenario').value = aiTicket.scenario; document.getElementById('post-criteria').value = (aiTicket.criteria || []).join('\n');
+                showToast("✨ AI drafted the ticket!");
+            } catch (e) { console.error(e); } finally { btn.disabled = false; btn.innerHTML = "✨ Draft"; }
+        };
+
+        document.getElementById('post-ticket-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.innerText = "Publishing...";
+            
+            const newTicket = {
+                title: document.getElementById('post-title').value, type: document.getElementById('post-domain').value,
+                difficulty: document.getElementById('post-difficulty').value, xp: parseInt(document.getElementById('post-xp').value),
+                tech: document.getElementById('post-tech').value.split(',').map(s => s.trim()),
+                scenario: document.getElementById('post-scenario').value, criteria: document.getElementById('post-criteria').value.split('\n').filter(s => s.trim() !== ''),
+                isWorkspace: false, createdAt: Date.now(), createdBy: getUserId()
+            };
+            
+            try { 
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forge_tickets'), newTicket); 
+                showToast("Ticket posted live!"); 
+            } catch (err) { 
+                console.error(err); 
+                showToast("Failed to post ticket.", true); 
+            }
+            
+            e.target.reset(); window.closeModal('post-modal'); btn.disabled = false; btn.innerText = "Publish Ticket";
+        });
+
+        window.generatePortfolio = async () => {
+            const btn = document.querySelector('#portfolio-container button'); btn.disabled = true; btn.innerHTML = "⏳ Generating...";
+            const prompt = `Write a professional portfolio Markdown case study for ticket: ${currentProject.title}. Tech: ${(currentProject.tech || []).join(', ')}. Combined Code:\n${getCombinedCode()}\n\nFormat: ### 🚀 The Challenge, ### 💡 The Solution, ### 🛠️ Skills Demonstrated.`;
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                document.getElementById('portfolio-content').value = (await res.json()).candidates[0].content.parts[0].text;
+                document.getElementById('portfolio-modal').classList.add('open');
+            } catch (error) { console.error(error); showToast("Failed to generate.", true); } finally { btn.disabled = false; btn.innerHTML = "📋 Generate Portfolio Case Study"; }
+        };
+
+        window.copyPortfolio = () => { document.getElementById('portfolio-content').select(); document.execCommand('copy'); showToast("📋 Copied to clipboard!"); };
+        
+        window.collectReward = async () => {
+            if(isGraded) {
+                // Ensure they haven't already solved it to prevent XP farming
+                if (!solvedTickets.includes(currentProject.id)) {
+                    solvedTickets.push(currentProject.id);
+                    
+                    const previousRank = getRank(window.userXP).name;
+                    const earnedXP = parseInt(currentProject.xp) || 250;
+                    window.userXP += earnedXP; 
+                    
+                    recordActivity();
+                    saveLocalState(getUserId());
+                    window.updateHeaderGamification();
+
+                    const newRank = getRank(window.userXP);
+                    if (previousRank !== newRank.name) {
+                        showToast(`Level Up! You are now a ${newRank.name} 🎉`);
+                    } else {
+                        showToast(`Awesome! You earned ${earnedXP} XP.`);
+                    }
+
+                    // Sync with Firestore (Crucial for Dashboard!)
+                    if (db && currentUser && !currentUser.isAnonymous) {
+                        try {
+                            const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid);
+                            await setDoc(userDocRef, {
+                                xp: window.userXP,
+                                streak: window.userStreak,
+                                lastLogin: new Date(),
+                                solvedTickets: solvedTickets
+                            }, { merge: true });
+                        } catch(err) {
+                            console.error("Failed to sync to DB:", err);
+                        }
+                    }
+                }
+                window.closeModal('workspace-modal');
+                renderStudentGrid(); // Refresh grid to show the new solved badge
+            } else {
+                // Revise Logic - Hide result UI, let them continue editing
+                document.getElementById('ai-result').style.display = 'none';
+                const btn = document.getElementById('submit-btn');
+                btn.disabled = false; 
+                btn.innerText = "Submit PR for AI Review";
+            }
+        };
+
+        document.getElementById('hero-prompt').addEventListener('keypress', function(e) { if (e.key === 'Enter') window.generateFromHero(e); });
+
+        initFirebase();
+    </script>
+</body>
+</html>

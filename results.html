@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta name='impact-site-verification' value='5c27657f-deb8-40cb-b380-8bab37136a89'>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Roadmap - Eduvo AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECJB4EMM1X"></script>
+     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ECJB4EMM1X');
+    </script>
+
+    <style>
+        body { background-color: #0A0A0A; color: #EAEAEA; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        /* --- Aurora Background --- */
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -10; }
+        .aurora-glow { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; }
+        .aurora-1 { width: 500px; height: 500px; background: #A3E635; top: 0; left: 10%; animation: float 20s infinite linear -10s; }
+        .aurora-2 { width: 400px; height: 400px; background: #60A5FA; bottom: 10%; right: 20%; animation: float 20s infinite linear -5s; }
+        @keyframes float { 0% { transform: translate(0,0); } 50% { transform: translate(40px, 60px); } 100% { transform: translate(0,0); } }
+
+        /* --- Glass Card --- */
+        .glass-card {
+            background-color: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+        }
+
+        /* --- Career Stats Widget --- */
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, #A3E635, transparent);
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 800; color: white; }
+        .stat-label { font-size: 0.875rem; color: #9ca3af; margin-top: 0.25rem; }
+
+        /* --- Timeline & Steps --- */
+        .timeline-container { position: relative; padding-left: 2rem; }
+        .timeline-line {
+            position: absolute; left: 0; top: 1rem; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, #A3E635, rgba(255,255,255,0.1));
+            z-index: 0;
+        }
+        .step-card {
+            position: relative; margin-bottom: 2.5rem; padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        .step-card:hover { transform: translateX(5px); border-color: rgba(163, 230, 53, 0.3); }
+        
+        /* Checkbox Logic */
+        .step-marker {
+            position: absolute; left: -2.9rem; top: 1.5rem;
+            width: 2rem; height: 2rem;
+            background: #0A0A0A; border: 2px solid #A3E635;
+            border-radius: 50%;
+            color: #A3E635; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1; cursor: pointer; transition: all 0.2s;
+        }
+        .step-marker:hover { background: #A3E635; color: #0A0A0A; }
+        
+        .step-card.completed { opacity: 0.5; filter: grayscale(0.8); }
+        .step-card.completed .step-marker { background: #A3E635; color: #0A0A0A; }
+        .step-card.completed .step-marker::after { content: '✓'; }
+        .step-card.completed .step-number-text { display: none; }
+
+        /* --- AFFILIATE DEAL CARD --- */
+        .deal-card {
+            margin-top: 1.5rem;
+            background: linear-gradient(145deg, rgba(163, 230, 53, 0.1), rgba(0,0,0,0));
+            border: 1px solid #A3E635;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            animation: pulse-border 3s infinite;
+        }
+        .deal-badge {
+            background-color: #A3E635; color: #0A0A0A;
+            font-size: 0.7rem; font-weight: 800; padding: 2px 6px;
+            border-radius: 4px; text-transform: uppercase;
+            display: inline-block; margin-bottom: 0.25rem;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(163, 230, 53, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(163, 230, 53, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(163, 230, 53, 0); }
+        }
+
+        /* Buttons */
+        .btn-new {
+            background-image: linear-gradient(to right, #a3e635, #bef264);
+            color: #172554; font-weight: 700; padding: 0.75rem 1.5rem;
+            border-radius: 99px; display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: transform 0.2s; cursor: pointer;
+        }
+        .btn-new:hover { transform: translateY(-2px); }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem; border-radius: 99px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); border-color: white; }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Loading Spinner */
+        #loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.2); border-left-color: #A3E635; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Toast */
+        .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 0.75rem 1.5rem; background: #A3E635; color: #000; font-weight: bold; border-radius: 99px; z-index: 100; transition: bottom 0.5s; }
+        .toast.show { bottom: 20px; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="aurora-bg">
+        <div class="aurora-glow aurora-1"></div>
+        <div class="aurora-glow aurora-2"></div>
+    </div>
+
+    <header class="relative z-30 border-b border-white/10">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-white">Eduvo AI</a>
+            <div class="flex items-center gap-4">
+                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Dashboard</a>
+                <button id="save-roadmap-btn" class="btn-secondary text-sm">Save Path</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 max-w-4xl relative z-10">
+        
+        <div id="loading-container">
+            <div class="spinner"></div>
+            <h2 class="text-2xl font-bold text-white mt-6">Loading Roadmap...</h2>
+            <p class="text-gray-400 mt-2">Fetching your personalized plan</p>
+        </div>
+
+        <div id="roadmap-container" class="hidden">
+            
+            <div class="text-center mb-10">
+                <div class="inline-block bg-lime-400/10 text-lime-400 text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-widest">SUCCESS PLAN</div>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4" id="roadmap-title">Loading...</h1>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto" id="roadmap-desc">Based on your goals</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value text-lime-400" id="salary-stat">--</div>
+                    <div class="stat-label">Potential Salary</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-blue-400" id="time-stat">--</div>
+                    <div class="stat-label">Est. Timeline</div>
+                </div>
+            </div>
+
+            <div class="timeline-container" id="steps-container">
+                <div class="timeline-line"></div>
+                </div>
+
+            <div class="mt-16 text-center">
+                <a href="dashboard.html" class="btn-new px-8 py-4 text-lg">
+                    <span>Go to Dashboard</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="toast" class="toast">Roadmap Saved!</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, collection, serverTimestamp, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3euFCtckrdkhxcwQw28PWooUoOycTSdU",
+            authDomain: "pathfinder-ai-87d22.firebaseapp.com",
+            projectId: "pathfinder-ai-87d22",
+            storageBucket: "pathfinder-ai-87d22.firebasestorage.app",
+            messagingSenderId: "254163992794",
+            appId: "1:254163992794:web:d34104f34142acac5be5e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = 'default-app-id';
+
+        let currentRoadmapData = null;
+        let currentUser = null;
+        let currentRoadmapId = null; // ID from URL if viewing saved roadmap
+
+        // --- INIT ---
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            currentRoadmapId = urlParams.get('id'); // Check if loading specific roadmap
+
+            const saveBtn = document.getElementById('save-roadmap-btn');
+
+            if (currentRoadmapId) {
+                // SCENARIO A: Viewing a SAVED roadmap
+                if (user) {
+                    await fetchSavedRoadmap(currentRoadmapId, user.uid);
+                    saveBtn.innerText = "Update Progress"; // Change button action
+                } else {
+                    // User must sign in to view saved data
+                    window.location.href = "signin.html";
+                }
+            } else {
+                // SCENARIO B: Viewing a NEW roadmap (from session)
+                if (!user) {
+                    saveBtn.innerText = "Sign In to Save";
+                    saveBtn.onclick = () => window.location.href = 'signin.html';
+                }
+                loadSessionRoadmap();
+            }
+        });
+
+        function loadSessionRoadmap() {
+            const rawData = sessionStorage.getItem('newRoadmap');
+            if (!rawData) {
+                window.location.href = 'personalize.html';
+                return;
+            }
+            try {
+                const cleanJson = rawData.replace(/```json/g, '').replace(/```/g, '');
+                currentRoadmapData = JSON.parse(cleanJson);
+                
+                // Ensure steps have 'completed' property for checkbox logic
+                currentRoadmapData.steps = currentRoadmapData.steps.map(s => ({...s, completed: false}));
+                
+                renderPage(currentRoadmapData);
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            } catch (e) {
+                console.error("Parse Error", e);
+                document.getElementById('loading-container').innerHTML = "<h2 class='text-white text-2xl'>Error parsing roadmap.</h2>";
+            }
+        }
+
+        async function fetchSavedRoadmap(id, uid) {
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'users', uid, 'roadmaps', id);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    currentRoadmapData = docSnap.data();
+                    renderPage(currentRoadmapData);
+                } else {
+                    alert("Roadmap not found.");
+                    window.location.href = "dashboard.html";
+                }
+            } catch (error) {
+                console.error("DB Error", error);
+                document.getElementById('loading-container').innerHTML = "<h2 class='text-white text-2xl'>Error loading from database.</h2>";
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderPage(data) {
+            document.getElementById('loading-container').style.display = 'none';
+            document.getElementById('roadmap-container').classList.remove('hidden');
+
+            document.getElementById('roadmap-title').textContent = data.title || "Your Roadmap";
+            document.getElementById('roadmap-desc').textContent = `Based on your goal: "${data.sourceGoal}"`;
+
+            generateStats(data.title);
+
+            const container = document.getElementById('steps-container');
+            container.innerHTML = '<div class="timeline-line"></div>';
+
+            data.steps.forEach((step, index) => {
+                const stepNum = index + 1;
+                const stepEl = document.createElement('div');
+                stepEl.className = `step-card fade-in ${step.completed ? 'completed' : ''}`;
+                
+                const dealHTML = generateAffiliateDeal(step.title);
+
+                stepEl.innerHTML = `
+                    <div class="step-marker" onclick="toggleStep(this, ${index})">
+                        <span class="step-number-text">${stepNum}</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">${step.title}</h3>
+                    <p class="text-gray-400 mb-4">${step.description}</p>
+                    <div class="bg-black/30 p-4 rounded-lg border border-white/5">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Recommended Learning</h4>
+                        <ul class="space-y-2">
+                            ${step.courses.map(c => `
+                                <li class="text-sm text-lime-400 flex items-center gap-2">
+                                    <span>📚</span> 
+                                    <a href="https://www.google.com/search?q=${encodeURIComponent(c.name + ' course')}" target="_blank" class="hover:underline">
+                                        ${c.name}
+                                    </a>
+                                    <span class="text-gray-500">(${c.platform})</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    ${dealHTML}
+                `;
+                container.appendChild(stepEl);
+            });
+        }
+
+        // --- SMART STATS ---
+        function generateStats(title) {
+            const t = title.toLowerCase();
+            const currency = sessionStorage.getItem('userCurrency') || 'USD';
+            
+            let baseLow = 60; let baseHigh = 90; let time = "4 - 6 Months";
+            if (t.includes('senior') || t.includes('architect')) { baseLow = 120; baseHigh = 180; time = "12+ Months"; }
+            else if (t.includes('intern') || t.includes('junior')) { baseLow = 40; baseHigh = 60; time = "3 Months"; }
+
+            let salaryText = `$${baseLow}k - $${baseHigh}k / yr`;
+            if (currency === 'INR') {
+                let inrLow = Math.round(baseLow * 0.2); 
+                let inrHigh = Math.round(baseHigh * 0.25);
+                if (inrLow < 3) inrLow = 3; 
+                salaryText = `₹${inrLow}L - ₹${inrHigh}L / yr`;
+            } else if (currency === 'EUR') {
+                salaryText = `€${Math.round(baseLow * 0.9)}k - €${Math.round(baseHigh * 0.9)}k / yr`;
+            }
+
+            document.getElementById('salary-stat').innerText = salaryText;
+            document.getElementById('time-stat').innerText = time;
+        }
+
+        // --- AFFILIATE LOGIC ---
+        function generateAffiliateDeal(stepText) {
+            const text = stepText.toLowerCase();
+            const offers = [
+                { keywords: ['python', 'code'], title: 'Python Bootcamp 2025', discount: '85% OFF', code: 'PATHFINDER85', link: 'https://www.udemy.com/' },
+                { keywords: ['data', 'sql'], title: 'Data Science Masterclass', discount: 'SPECIAL OFFER', code: 'DATA20', link: 'https://www.coursera.org/' },
+                { keywords: ['design', 'figma'], title: 'Complete UX Design', discount: '90% OFF', code: 'DESIGN90', link: 'https://www.udemy.com/' },
+                { keywords: ['web', 'react'], title: 'Full Stack Web Dev', discount: 'Flash Sale', code: 'WEBDEV', link: 'https://www.udemy.com/' }
+            ];
+            const match = offers.find(offer => offer.keywords.some(k => text.includes(k)));
+            if (match) {
+                return `<div class="deal-card">
+                    <div><div class="deal-badge">${match.discount}</div><div class="font-bold text-white text-sm">${match.title}</div></div>
+                    <a href="${match.link}" target="_blank" class="btn-new text-xs px-4 py-2 h-auto shadow-lg shadow-lime-500/20">Get Deal &rarr;</a>
+                </div>`;
+            }
+            return '';
+        }
+
+        // --- UI HELPERS ---
+        window.toggleStep = function(element, index) {
+            const card = element.closest('.step-card');
+            card.classList.toggle('completed');
+            const isComplete = card.classList.contains('completed');
+            
+            // Update local data object
+            if (currentRoadmapData && currentRoadmapData.steps[index]) {
+                currentRoadmapData.steps[index].completed = isComplete;
+            }
+
+            if (isComplete) confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 }, colors: ['#A3E635'] });
+        }
+
+        // --- SAVE / UPDATE LOGIC ---
+        document.getElementById('save-roadmap-btn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            const btn = document.getElementById('save-roadmap-btn');
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+
+            try {
+                const roadmapsCollection = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'roadmaps');
+                
+                if (currentRoadmapId) {
+                    // UPDATE Existing
+                    const docRef = doc(roadmapsCollection, currentRoadmapId);
+                    await updateDoc(docRef, {
+                        steps: currentRoadmapData.steps, // Save progress checkboxes
+                        lastUpdated: serverTimestamp()
+                    });
+                    btn.innerText = "Progress Updated!";
+                } else {
+                    // CREATE New
+                    const docRef = await addDoc(roadmapsCollection, { 
+                        ...currentRoadmapData, 
+                        createdAt: serverTimestamp(), 
+                        status: 'active' 
+                    });
+                    // Update URL to avoid duplicate saves
+                    window.history.replaceState(null, '', `?id=${docRef.id}`);
+                    currentRoadmapId = docRef.id;
+                    btn.innerText = "Saved!";
+                }
+
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+                
+            } catch (error) {
+                console.error(error);
+                alert("Error saving.");
+                btn.disabled = false;
+                btn.innerText = currentRoadmapId ? "Update Progress" : "Save Path";
+            }
+        });
+    </script>
+
+    <footer class="container mx-auto px-6 py-12 border-t border-white/10 text-center text-gray-400 relative z-10">
+        <div class="flex flex-col items-center gap-6">
+            <p>&copy; 2025 Eduvo AI. All rights reserved.</p>
+            <div class="flex gap-8 text-sm font-medium">
+                <a href="legal.html#privacy" class="hover:text-lime-400">Privacy Policy</a>
+                <a href="legal.html#terms" class="hover:text-lime-400">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+    <script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js" charset="UTF-8"></script>
+    <script type="text/javascript" charset="UTF-8">
+        document.addEventListener('DOMContentLoaded', function () {
+            cookieconsent.run({"notice_banner_type":"simple","consent_type":"express","palette":"dark","language":"en","page_load_consent_levels":["strictly-necessary"],"notice_banner_reject_button_hide":false,"preferences_center_close_button_hide":false,"page_refresh_confirmation_buttons":false,"website_name":"EduvoAI"});
+        });
+    </script>
+
+    <noscript>Free cookie consent management tool by <a href="https://www.termsfeed.com/">TermsFeed</a></noscript>
+    <!-- End Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+    <!-- Below is the link that users can use to open Preferences Center to change their preferences. Do not modify the ID parameter. Place it where appropriate, style it as needed. -->
+    <a href="#" id="open_preferences_center">Update cookies preferences</a>
+</body>
+</html>
