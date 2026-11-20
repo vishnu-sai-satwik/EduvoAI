@@ -573,7 +573,7 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const API_KEY = "AIzaSyA_wj1Ql_IaavQNfLPGYBNHjn4n9JiarzE"; // ⚠️ YOUR GEMINI API KEY GOES HERE
+        const GEMINI_API_URL = "/api/gemini";
         
         // --- MATCHING YOUR DASHBOARD FIREBASE CONFIG ---
         const firebaseConfig = {
@@ -1248,7 +1248,6 @@
         window.submitSolution = async () => {
             const combinedCode = getCombinedCode();
             if (combinedCode.length < 30) return showToast("Code is too short to review.", true);
-            if (!API_KEY) return showToast("API Key Missing! Set 'API_KEY' at the top of the script.", true);
             
             saveDraft(); // Save before submitting
             
@@ -1267,7 +1266,7 @@
                 isFlagged = true; btn.disabled = true; overlay.classList.remove('hidden'); document.getElementById('loading-text').innerText = "Analyzing Activity...";
                 const prompt = `User flagged for: "${flagReason}". Code: ${combinedCode.substring(0, 500)}. Ask ONE specific technical question about this code to prove they wrote it. Max 2 sentences.`;
                 try {
-                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
+                    const res = await fetch(GEMINI_API_URL, {
                         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
                     const data = await res.json(); acQuestion = data.candidates[0].content.parts[0].text;
@@ -1289,7 +1288,7 @@
             
             const prompt = `Flagged for: ${flagReason}. Q: ${acQuestion}. Ans: ${answer}. Code: ${getCombinedCode().substring(0,200)}. Did they explain correctly? ONLY "PASS" or "FAIL".`;
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
+                const res = await fetch(GEMINI_API_URL, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
                 const text = (await res.json()).candidates[0].content.parts[0].text;
@@ -1323,7 +1322,7 @@ CRITICAL RULE: You are an absolute strict grader. You MUST strictly evaluate if 
 Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
             
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
+                const res = await fetch(GEMINI_API_URL, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
                 });
                 const result = JSON.parse((await res.json()).candidates[0].content.parts[0].text);
@@ -1348,7 +1347,6 @@ Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
         // --- GENERATION & POSTING ---
         window.generateFromHero = async (event) => {
             if (!window.requireAuth(event)) return;
-            if (!API_KEY) return showToast("API Key Missing!", true);
             const btn = document.getElementById('hero-gen-btn'); const req = document.getElementById('hero-prompt').value;
             const typeValue = document.getElementById('hero-domain').value; const diffValue = document.getElementById('hero-difficulty').value;
             if(!req.trim()) return showToast("Please describe what you want to build.", true);
@@ -1356,7 +1354,7 @@ Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
             btn.disabled = true; btn.innerHTML = "⏳";
             const prompt = `Create a ${diffValue} difficulty JSON ticket based on: "${req}". Schema: {"title":"", "tech":[""], "scenario":"", "criteria":[""], "xp": 250}`;
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
+                const res = await fetch(GEMINI_API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
                 const ticket = JSON.parse((await res.json()).candidates[0].content.parts[0].text);
                 const newTicket = { ...ticket, difficulty: diffValue, type: typeValue, isWorkspace: false, createdAt: Date.now(), createdBy: getUserId() };
                 
@@ -1376,11 +1374,10 @@ Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
 
         window.generateAITicket = async (event) => {
             if (!window.requireAuth(event)) return;
-            if (!API_KEY) return showToast("API Key Missing!", true);
             const btn = document.getElementById('ai-gen-btn'); btn.disabled = true; btn.innerHTML = "⏳ Drafting...";
             const prompt = `Create a realistic Jira ticket. Return JSON: {"title": "Title", "tech": ["T1"], "scenario": "Desc", "criteria": ["C1"]}`;
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
+                const res = await fetch(GEMINI_API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
                 const data = await res.json(); const aiTicket = JSON.parse(data.candidates[0].content.parts[0].text);
                 document.getElementById('post-title').value = aiTicket.title; document.getElementById('post-tech').value = (aiTicket.tech || []).join(', ');
                 document.getElementById('post-scenario').value = aiTicket.scenario; document.getElementById('post-criteria').value = (aiTicket.criteria || []).join('\n');
@@ -1416,7 +1413,7 @@ Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
             const btn = document.querySelector('#portfolio-container button'); btn.disabled = true; btn.innerHTML = "⏳ Generating...";
             const prompt = `Write a professional portfolio Markdown case study for ticket: ${currentProject.title}. Tech: ${(currentProject.tech || []).join(', ')}. Combined Code:\n${getCombinedCode()}\n\nFormat: ### 🚀 The Challenge, ### 💡 The Solution, ### 🛠️ Skills Demonstrated.`;
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                const res = await fetch(GEMINI_API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
                 document.getElementById('portfolio-content').value = (await res.json()).candidates[0].content.parts[0].text;
                 document.getElementById('portfolio-modal').classList.add('open');
             } catch (error) { console.error(error); showToast("Failed to generate.", true); } finally { btn.disabled = false; btn.innerHTML = "📋 Generate Portfolio Case Study"; }

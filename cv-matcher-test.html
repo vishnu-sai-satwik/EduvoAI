@@ -444,7 +444,6 @@
         window.submitFeedback = submitFeedback;
 
         // --- CACHE & API LOGIC ---
-        const API_KEY = "AIzaSyA_wj1Ql_IaavQNfLPGYBNHjn4n9JiarzE"; // ⚠️ YOUR GEMINI API KEY GOES HERE
         let isRecruiter = false;
         let extractedTexts = [];
         const matchCache = new Map();
@@ -583,7 +582,7 @@
             }
 
             const MODEL_NAME = "gemini-3-flash-preview";
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+            const url = "/api/gemini";
             
             const promptText = `
             You are an expert Applicant Tracking System (ATS) and Senior Technical Recruiter.

@@ -850,8 +850,7 @@
         }
         
         // --- Roadmap Generation ---
-        const API_KEY = "AIzaSyA_wj1Ql_IaavQNfLPGYBNHjn4n9JiarzE"; // Canvas runtime injects key here
-        const ROADMAP_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`
+        const ROADMAP_API_URL = "/api/gemini";
         
         const ROADMAP_SYSTEM_INSTRUCTION = {
             parts: [{ text: "You are an expert AI Career Mentor. The user will give you a career goal. Your task is to generate a concise, actionable, step-by-step learning roadmap. You MUST return ONLY a JSON object. Do not include any text before or after the JSON. The JSON object must follow this exact schema: \n{\n  \"title\": \"Roadmap: [User's Goal]\",\n  \"sourceGoal\": \"[User's Goal]\",\n  \"steps\": [\n    {\n      \"title\": \"Step 1: [Step Title]\",\n      \"description\": \"[Brief 1-2 sentence description of this step]\",\n      \"courses\": [\n        {\n          \"name\": \"[Course Name 1]\",\n          \"platform\": \"[e.g., Coursera, Udemy, Google, etc.]\"\n        },\n        {\n          \"name\": \"[Course Name 2]\",\n          \"platform\": \"[e.g., edX, Microsoft Learn, etc.]\"\n        }\n      ]\n    },\n    {\n      \"title\": \"Step 2: [Step Title]\",\n      \"description\": \"[Description]\",\n      \"courses\": [\n        {\n          \"name\": \"[Course Name 1]\",\n          \"platform\": \"[Platform]\"\n        }\n      ]\n    }\n  ]\n}\nGenerate 3-5 steps." }]
@@ -958,7 +957,7 @@
                 chatBody.appendChild(messageElement); chatBody.scrollTop = chatBody.scrollHeight;
             };
 
-            const CHAT_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`;
+            const CHAT_API_URL = "/api/gemini";
             const CHAT_SYSTEM_INSTRUCTION = { 
                 parts: [{ 
                     text: "You are 'Eduvo Mentor', the official AI guide for Eduvo AI. You help users navigate our three main features: 1. AI Roadmaps (personalized career learning paths based on budget/time). 2. Eduvo Forge (a live engineering simulator where users solve real-world tickets, write code in our IDE, and get graded by an AI Senior Dev to earn XP). 3. CV Matcher Pro (analyzes PDF resumes against Job Descriptions to beat the ATS). Be concise, encouraging, and highly conversational. Do NOT use markdown formatting like asterisks or hashtags. Keep paragraphs very short. If they ask how to start coding, point them to Eduvo Forge. If they ask about resumes, point them to CV Match. If they ask about learning, point them to Generate Roadmap." 

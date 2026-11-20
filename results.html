@@ -228,6 +228,8 @@
         let currentRoadmapId = null; // ID from URL if viewing saved roadmap
 
         // --- INIT ---
+        loadSessionRoadmap();
+
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             
@@ -251,7 +253,6 @@
                     saveBtn.innerText = "Sign In to Save";
                     saveBtn.onclick = () => window.location.href = 'signin.html';
                 }
-                loadSessionRoadmap();
             }
         });
 
