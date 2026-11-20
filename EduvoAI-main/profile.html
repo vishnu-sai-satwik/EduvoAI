@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta name='impact-site-verification' value='5c27657f-deb8-40cb-b380-8bab37136a89'>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Eduvo AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ECJB4EMM1X"></script>
+     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ECJB4EMM1X');
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0A;
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; overflow: hidden; z-index: -10; }
+        .aurora-glow { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; will-change: transform; }
+        .aurora-1 { width: 500px; height: 500px; background: #A3E635; top: 0; left: 10%; animation: float 20s infinite linear -10s; }
+        .aurora-2 { width: 400px; height: 400px; background: #60A5FA; bottom: 10%; right: 20%; animation: float 20s infinite linear -5s; }
+        @keyframes float { 0% { transform: translateY(0px) translateX(0px) rotate(0deg); } 50% { transform: translateY(40px) translateX(60px) rotate(20deg); } 100% { transform: translateY(0px) translateX(0px) rotate(0deg); } }
+
+        .glass-card {
+            background-color: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-new {
+            background-image: linear-gradient(to right, #a3e635, #bef264);
+            color: #172554;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px 0 rgba(163, 230, 53, 0.3);
+            cursor: pointer;
+        }
+        .btn-new:hover { transform: translateY(-2px); box-shadow: 0 6px 20px 0 rgba(163, 230, 53, 0.5); }
+        .btn-new:disabled { background: #4d7c0f; box-shadow: none; transform: none; cursor: not-allowed; opacity: 0.7; }
+
+        .btn-secondary {
+            width: 100%; text-align: center; display: inline-block; padding: 0.75rem 1.5rem;
+            font-weight: 600; border-radius: 99px; background-color: rgba(255, 255, 255, 0.1); color: #EAEAEA;
+            transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;
+        }
+        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+
+        .btn-danger {
+            width: 100%; text-align: center; display: inline-block; padding: 0.75rem 1.5rem;
+            font-weight: 600; border-radius: 99px; background-color: rgba(220, 38, 38, 0.2); color: #F87171;
+            transition: all 0.3s ease; border: 1px solid rgba(220, 38, 38, 0.4); cursor: pointer;
+        }
+        .btn-danger:hover { background-color: rgba(220, 38, 38, 0.4); color: #fff; transform: translateY(-2px); }
+        .btn-danger:disabled { background-color: rgba(220, 38, 38, 0.1); color: #737373; cursor: not-allowed; transform: none; }
+
+        .profile-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(145deg, #A3E635, #60A5FA);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease; transform-style: preserve-3d;
+        }
+        .profile-icon:hover { transform: scale(1.1) rotateZ(10deg); box-shadow: 0 4px 15px rgba(163, 230, 53, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2); }
+        .profile-icon svg { width: 24px; height: 24px; color: #0A0A0A; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5)); }
+
+        .form-input {
+            width: 100%; background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem; padding: 0.75rem 1rem; color: #EAEAEA; font-size: 1rem; transition: all 0.3s ease;
+        }
+        .form-input:focus { outline: none; border-color: #A3E635; box-shadow: 0 0 15px rgba(163, 230, 53, 0.3); }
+        .form-input:disabled { background-color: rgba(255, 255, 255, 0.02); color: #737373; cursor: not-allowed; }
+
+        .streak-card-main {
+            background-color: #0f0f0f; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; height: 100%; min-height: 200px;
+        }
+        .streak-number-big { font-size: 5rem; font-weight: 800; line-height: 1; color: #A3E635; text-shadow: 0 0 20px rgba(163, 230, 53, 0.3); }
+        .streak-label-big { font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.5rem; }
+
+        .badges-grid-new { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .badge-card {
+            background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.25rem;
+            padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            transition: all 0.3s ease; opacity: 0.6; filter: grayscale(100%);
+        }
+        .badge-card.unlocked {
+            opacity: 1; filter: grayscale(0%); border-color: #A3E635; background: linear-gradient(145deg, rgba(163, 230, 53, 0.05), transparent);
+            box-shadow: 0 4px 20px rgba(163, 230, 53, 0.1);
+        }
+        .badge-emoji { font-size: 3rem; margin-bottom: 0.75rem; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5)); }
+        .badge-title { font-size: 0.9rem; font-weight: 600; color: #d4d4d4; line-height: 1.2; }
+        .badge-card.unlocked .badge-title { color: #fff; }
+
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px); z-index: 990; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-content {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); width: calc(100vw - 40px);
+            max-width: 400px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-backdrop.visible, .modal-content.visible { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+
+        .toast {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 0.75rem 1.5rem;
+            background-color: #A3E635; color: #0A0A0A; font-weight: 600; border-radius: 99px; box-shadow: 0 4px 20px rgba(163, 230, 53, 0.5);
+            z-index: 1001; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .toast.show { bottom: 20px; }
+        .toast.error { background-color: #DC2626; color: #FAFAFA; box-shadow: 0 4px 20px rgba(220, 38, 38, 0.5); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="aurora-bg">
+        <div class="aurora-glow aurora-1"></div>
+        <div class="aurora-glow aurora-2"></div>
+    </div>
+
+    <!-- Unified Top Bar -->
+    <header class="relative z-30 border-b border-white/10">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-white flex items-center gap-2">Eduvo <span class="text-lime-400">AI</span></a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Dashboard</a>
+                <a href="personalize.html" class="text-gray-300 hover:text-white transition-colors">Generate</a>
+                <a href="cv-matcher-test.html" class="text-gray-300 hover:text-white transition-colors">CV Match</a>
+                <a href="projects.html" class="text-gray-300 hover:text-white transition-colors">Forge</a>
+                <a href="index.html#how-it-works" class="text-gray-300 hover:text-white transition-colors">How It Works</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="profile.html" id="header-profile-link" class="profile-icon hidden" title="My Profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A1.875 1.875 0 0118 22.5H6.002c-.997 0-1.808-.8-1.808-1.875z" />
+                    </svg>
+                </a>
+                <a href="signin.html?redirect=profile.html" id="header-signin-link" class="btn-new hidden w-auto px-6">
+                    <span>Sign In</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 container mx-auto px-6 py-16 md:py-24">
+        <div id="loading-container" class="text-center flex flex-col items-center justify-center min-h-[50vh]">
+            <div class="spinner"></div>
+            <h1 class="text-3xl font-bold text-white mt-6">Loading Profile...</h1>
+        </div>
+
+        <div id="profile-container" class="hidden max-w-5xl mx-auto md:grid md:grid-cols-3 md:gap-12">
+            <div class="md:col-span-1 space-y-8">
+                <div class="glass-card p-6">
+                    <h2 class="text-2xl font-bold text-white mb-6">Your Profile</h2>
+                    <form id="profile-form" class="space-y-4">
+                        <div>
+                            <label for="full-name" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                            <input type="text" id="full-name" class="form-input" placeholder="Enter your name">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                            <input type="email" id="email" class="form-input" disabled>
+                            <p class="text-xs text-gray-400 mt-2">Email address cannot be changed.</p>
+                        </div>
+                        <button type="submit" id="update-profile-btn" class="btn-new w-full">
+                            <span>Update Profile</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="glass-card p-6">
+                    <h2 class="text-2xl font-bold text-white mb-6">Account</h2>
+                    <div class="space-y-4">
+                        <button id="sign-out-btn" class="btn-secondary">
+                            <span>Sign Out</span>
+                        </button>
+                        <button id="delete-account-btn" class="btn-danger">
+                            <span>Delete Account</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 mt-12 md:mt-0">
+                <div class="glass-card p-6" id="achievements-section">
+                    <h2 class="text-2xl font-bold text-white mb-6">My Achievements</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="streak-card-main">
+                            <div class="streak-number-big" id="streak-count-main">0</div> 
+                            <div class="streak-label-big">Day Streak</div>
+                        </div>
+                        <div class="badges-grid-new" id="badges-grid">
+                            <div class="badge-card" id="badge-first-roadmap">
+                                <div class="badge-emoji">🌱</div>
+                                <span class="badge-title">First<br>Roadmap</span>
+                            </div>
+                            
+                            <div class="badge-card" id="badge-first-step">
+                                <div class="badge-emoji">👟</div>
+                                <span class="badge-title">First<br>Step</span>
+                            </div>
+
+                            <div class="badge-card" id="badge-5-day-streak">
+                                <div class="badge-emoji">🔥</div>
+                                <span class="badge-title">5-Day<br>Streak</span>
+                            </div>
+                            
+                            <div class="badge-card" id="badge-roadmap-done">
+                                <div class="badge-emoji">🏆</div>
+                                <span class="badge-title">Roadmap<br>Done</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="delete-modal-backdrop" class="modal-backdrop"></div>
+    <div id="delete-modal" class="modal-content">
+        <div class="glass-card p-6">
+            <h2 class="text-2xl font-bold text-red-500 mb-4">Are you sure?</h2>
+            <p class="text-gray-300 mb-6">
+                This action is permanent and cannot be undone. All your saved roadmaps,
+                progress, and achievements will be deleted.
+            </p>
+            <p class="text-sm text-gray-300 mb-2">
+                To confirm, please type <strong class="text-red-400">DELETE</strong> in the box below.
+            </p>
+            <input type="text" id="delete-confirm-input" class="form-input mb-6 uppercase" placeholder="DELETE">
+            <div class="space-y-4">
+                <button id="delete-confirm-btn" class="btn-danger" disabled>
+                    <span>Delete My Account</span>
+                </button>
+                <button id="delete-cancel-btn" class="btn-secondary">
+                    <span>Cancel</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-notification" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signOut, updateProfile, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, writeBatch, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3euFCtckrdkhxcwQw28PWooUoOycTSdU",
+            authDomain: "pathfinder-ai-87d22.firebaseapp.com",
+            projectId: "pathfinder-ai-87d22",
+            storageBucket: "pathfinder-ai-87d22.appspot.com",
+            messagingSenderId: "254163992794",
+            appId: "1:254163992794:web:d34104f34142acac5be5e3",
+            measurementId: "G-ECJB4EMM1X"
+        };
+
+        let app, auth, db;
+        let currentUserId = null;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (error) {
+            console.error("Error initializing Firebase:", error);
+            showToast("Error connecting to Firebase.", true);
+        }
+
+        const loadingContainer = document.getElementById('loading-container');
+        const profileContainer = document.getElementById('profile-container');
+        const headerProfileLink = document.getElementById('header-profile-link');
+        const headerSigninLink = document.getElementById('header-signin-link');
+        const profileForm = document.getElementById('profile-form');
+        const fullNameInput = document.getElementById('full-name');
+        const emailInput = document.getElementById('email');
+        const updateProfileBtn = document.getElementById('update-profile-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        const streakCountMain = document.getElementById('streak-count-main');
+        
+        const deleteModalBackdrop = document.getElementById('delete-modal-backdrop');
+        const deleteModal = document.getElementById('delete-modal');
+        const deleteConfirmInput = document.getElementById('delete-confirm-input');
+        const deleteCancelBtn = document.getElementById('delete-cancel-btn');
+        const confirmDeleteBtn = document.getElementById('delete-confirm-btn');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!auth) {
+                loadingContainer.innerHTML = '<h1 class="text-3xl font-bold text-red-500">Error connecting to Firebase.</h1>';
+                return;
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user && !user.isAnonymous) {
+                    currentUserId = user.uid;
+                    headerProfileLink.classList.remove('hidden');
+                    headerSigninLink.classList.add('hidden');
+                    loadProfileData(user);
+                    listenForProgress();
+                } else {
+                    window.location.href = 'signin.html?redirect=profile.html';
+                }
+            });
+
+            profileForm.addEventListener('submit', handleUpdateProfile);
+            signOutBtn.addEventListener('click', handleSignOut);
+            deleteAccountBtn.addEventListener('click', () => {
+                deleteModal.classList.add('visible');
+                deleteModalBackdrop.classList.add('visible');
+                deleteConfirmInput.value = '';
+                confirmDeleteBtn.disabled = true;
+            });
+            deleteCancelBtn.addEventListener('click', closeDeleteModal);
+            deleteModalBackdrop.addEventListener('click', closeDeleteModal);
+            deleteConfirmInput.addEventListener('input', (e) => {
+                const normalized = (e.target.value || '').trim().toUpperCase();
+                confirmDeleteBtn.disabled = (normalized !== 'DELETE');
+            });
+            confirmDeleteBtn.addEventListener('click', handleDeleteAccount);
+        });
+
+        async function loadProfileData(user) {
+            fullNameInput.value = user.displayName || '';
+            emailInput.value = user.email || 'No email provided';
+            loadingContainer.classList.add('hidden');
+            profileContainer.classList.remove('hidden');
+        }
+
+        function listenForProgress() {
+            if (!currentUserId) return;
+            const userDocRef = doc(db, 'artifacts', appId, 'users', currentUserId);
+            onSnapshot(userDocRef, (docSnap) => {
+                if (!docSnap.exists()) return;
+                const userData = docSnap.data();
+                const lastLoginTimestamp = userData.lastLogin;
+                let userStreak = 0;
+                if (lastLoginTimestamp && lastLoginTimestamp.toDate) {
+                    const now = new Date();
+                    const lastLogin = lastLoginTimestamp.toDate();
+                    const diffTime = Math.abs(now - lastLogin);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (diffDays <= 1) {
+                        userStreak = userData.streak || 1;
+                    } else {
+                        userStreak = 0;
+                    }
+                }
+                streakCountMain.textContent = userStreak;
+                const earnedBadges = userData.badges || [];
+                updateBadgeUI('badge-first-roadmap', earnedBadges.includes('first-roadmap'));
+                updateBadgeUI('badge-first-step', earnedBadges.includes('first-step'));
+                updateBadgeUI('badge-5-day-streak', userStreak >= 5);
+            }, (error) => console.error("Error listening to user doc:", error));
+        }
+
+        function updateBadgeUI(badgeId, isUnlocked) {
+            const el = document.getElementById(badgeId);
+            if (!el) return;
+            if (isUnlocked) el.classList.add('unlocked'); else el.classList.remove('unlocked');
+        }
+
+        async function handleUpdateProfile(e) {
+            e.preventDefault();
+            const newName = fullNameInput.value.trim();
+            if (!newName) { showToast("Name cannot be empty.", true); return; }
+            setButtonLoading(updateProfileBtn, true, "Updating...");
+            try {
+                const user = auth.currentUser;
+                if (!user) throw new Error("No user found.");
+                await updateProfile(user, { displayName: newName });
+                const userDocRef = doc(db, 'artifacts', appId, 'users', currentUserId);
+                await setDoc(userDocRef, { displayName: newName }, { merge: true });
+                showToast("Profile updated successfully!");
+            } catch (error) {
+                if (error.code === 'auth/requires-recent-login') {
+                    showToast("This is a sensitive action. Please sign out and sign back in to try again.", true);
+                } else {
+                    showToast(`Error: ${error.message}`, true);
+                }
+            } finally {
+                setButtonLoading(updateProfileBtn, false, "Update Profile");
+            }
+        }
+
+        async function handleSignOut() {
+            setButtonLoading(signOutBtn, true, "Signing Out...");
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                showToast("Error signing out. Please try again.", true);
+                setButtonLoading(signOutBtn, false, "Sign Out");
+            }
+        }
+
+        function closeDeleteModal() {
+            deleteModalBackdrop.classList.remove('visible');
+            deleteModal.classList.remove('visible');
+        }
+
+        async function handleDeleteAccount() {
+            const normalized = (deleteConfirmInput.value || '').trim().toUpperCase();
+            if (normalized !== 'DELETE') return;
+
+            setButtonLoading(confirmDeleteBtn, true, "Deleting...");
+
+            try {
+                const user = auth.currentUser;
+                if (!user) throw new Error("No user found.");
+                const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; 
+                
+                try {
+                    const batch = writeBatch(db);
+                    const roadmapsRef = collection(db, 'artifacts', currentAppId, 'users', currentUserId, 'roadmaps');
+                    const roadmapsSnapshot = await getDocs(roadmapsRef);
+                    roadmapsSnapshot.forEach(docSnap => batch.delete(docSnap.ref));
+                    const userDocRef = doc(db, 'artifacts', currentAppId, 'users', currentUserId);
+                    batch.delete(userDocRef);
+                    await batch.commit();
+                } catch (firestoreError) { }
+
+                await deleteUser(user);
+                showToast("Account deleted successfully. Redirecting...", false);
+                setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+            } catch (error) {
+                let errorMessage = "Error deleting account. Please try again.";
+                if (error.code === 'auth/requires-recent-login') errorMessage = "Security Alert: You must Sign Out and Sign In again immediately before deleting your account.";
+                else if (error.code === 'auth/user-token-revoked') errorMessage = "Your session expired. Please sign in again.";
+                showToast(errorMessage, true);
+            } finally {
+                setButtonLoading(confirmDeleteBtn, false, "Delete My Account");
+                confirmDeleteBtn.disabled = true;
+                closeDeleteModal();
+            }
+        }
+    </script>
+    <script>
+        let toastTimer;
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-notification');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isError) toast.classList.add('error'); else toast.classList.remove('error');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        function setButtonLoading(button, isLoading, text) {
+            if (!button) return;
+            button.disabled = isLoading;
+            const span = button.querySelector('span');
+            if (span) span.textContent = text; else button.textContent = text;
+        }
+    </script>
+</body>
+</html>
