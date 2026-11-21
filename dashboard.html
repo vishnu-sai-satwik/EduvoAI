@@ -321,18 +321,23 @@
         });
 
         onAuthStateChanged(auth, async (user) => {
-            if (user && !user.isAnonymous) {
-                currentUserId = user.uid;
-                userNameEl.textContent = user.displayName ? user.displayName.split(' ')[0] : "Scholar";
-                headerProfile.classList.remove('hidden');
-                headerSignin.classList.add('hidden');
-                
-                await Promise.all([fetchRoadmaps(user.uid), fetchStats(user.uid)]);
-            } else {
-                headerProfile.classList.add('hidden');
-                headerSignin.classList.remove('hidden');
-                window.location.href = 'signin.html?redirect=dashboard.html';
+            if (!user) {
+                try {
+                    await signInAnonymously(auth);
+                } catch (error) {
+                    console.error("Unable to start a guest session:", error);
+                    window.location.href = 'index.html';
+                }
+                return;
             }
+
+            currentUserId = user.uid;
+            userNameEl.textContent = user.displayName ? user.displayName.split(' ')[0] : (user.isAnonymous ? "Guest" : "Scholar");
+            headerProfile.classList.remove('hidden');
+            if (user.isAnonymous) headerSignin.classList.remove('hidden');
+            else headerSignin.classList.add('hidden');
+
+            await Promise.all([fetchRoadmaps(user.uid), fetchStats(user.uid)]);
         });
 
         function initWeeklyChart() {

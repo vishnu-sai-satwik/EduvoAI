@@ -394,20 +394,6 @@
         
         let currentUser = null;
 
-        // --- AUTH GATE SYSTEM ---
-        window.requireAuth = function(event) {
-            if (!currentUser || currentUser.isAnonymous) {
-                if (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                showToast("Please sign in to access Matcher Pro.", true);
-                setTimeout(() => { window.location.href = 'signin.html?redirect=cv-matcher-test.html'; }, 1500);
-                return false;
-            }
-            return true;
-        };
-
         // --- Auth Observer ---
         onAuthStateChanged(auth, (user) => {
             const headerProfileLink = document.getElementById('header-profile-link');
@@ -516,8 +502,6 @@
         }
 
         document.getElementById('analyze-btn').onclick = async function(e) {
-            if (!window.requireAuth(e)) return; // <-- Secure Gate
-
             const jd = document.getElementById('jd-input').value.trim();
             
             if (!jd) return showToast("Please paste a Job Description!", true);
@@ -772,8 +756,6 @@
         });
 
         async function submitFeedback(event) {
-            if (!window.requireAuth(event)) return; // <-- Secure Gate
-            
             const text = document.getElementById('feedback-text').value.trim();
             const btn = document.getElementById('submit-feedback-btn');
 

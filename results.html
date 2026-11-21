@@ -205,7 +205,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, addDoc, collection, serverTimestamp, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- CONFIG ---
@@ -231,6 +231,16 @@
         loadSessionRoadmap();
 
         onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                try {
+                    await signInAnonymously(auth);
+                } catch (error) {
+                    console.error("Unable to start a guest session:", error);
+                    document.getElementById('loading-container').innerHTML = "<h2 class='text-white text-2xl'>Unable to start a guest session. Please refresh and try again.</h2>";
+                }
+                return;
+            }
+
             currentUser = user;
             
             const urlParams = new URLSearchParams(window.location.search);
@@ -243,16 +253,10 @@
                 if (user) {
                     await fetchSavedRoadmap(currentRoadmapId, user.uid);
                     saveBtn.innerText = "Update Progress"; // Change button action
-                } else {
-                    // User must sign in to view saved data
-                    window.location.href = "signin.html";
                 }
             } else {
                 // SCENARIO B: Viewing a NEW roadmap (from session)
-                if (!user) {
-                    saveBtn.innerText = "Sign In to Save";
-                    saveBtn.onclick = () => window.location.href = 'signin.html';
-                }
+                saveBtn.innerText = "Save Path";
             }
         });
 

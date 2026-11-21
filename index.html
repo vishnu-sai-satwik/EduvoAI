@@ -604,6 +604,30 @@
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileLinks = document.querySelectorAll('.mobile-link');
+        let guestSessionPromise = null;
+
+        async function ensureGuestSession() {
+            if (!auth) throw new Error("Firebase Auth is unavailable.");
+            await auth.authStateReady();
+            if (auth.currentUser) return auth.currentUser;
+
+            if (!guestSessionPromise) {
+                guestSessionPromise = (async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                        return auth.currentUser;
+                    } finally {
+                        guestSessionPromise = null;
+                    }
+                })();
+            }
+
+            return guestSessionPromise;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -642,19 +666,9 @@
             });
 
             if (auth) {
-                // FIXED: Wait for Firebase to read IndexedDB before creating anonymous sessions!
-                auth.authStateReady().then(async () => {
-                    if (!auth.currentUser) {
-                        try {
-                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                                await signInWithCustomToken(auth, __initial_auth_token);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                        } catch (error) {
-                            console.error("Initial auth fallback failed:", error);
-                        }
-                    }
+                ensureGuestSession().catch(error => {
+                    console.error("Unable to start a guest session:", error);
+                    showToast("Unable to start a guest session. Please try again.", true);
                 });
 
                 // Safe listener for UI updates (No more flashing or random signouts)
@@ -677,13 +691,12 @@
                 e.preventDefault();
                 const goal = heroGoalInput.value.trim();
                 if (goal) {
-                    if (!auth.currentUser || auth.currentUser.isAnonymous) {
-                        showToast("Please sign in to build your roadmap.", true);
-                        sessionStorage.setItem('pendingGoal', goal);
-                        setTimeout(() => window.location.href = 'signin.html?redirect=personalize.html', 1500);
-                        return;
-                    }
-                    handleGenerateRoadmap(goal, heroSubmitBtn, "Generate Path");
+                    ensureGuestSession()
+                        .then(() => handleGenerateRoadmap(goal, heroSubmitBtn, "Generate Path"))
+                        .catch(error => {
+                            console.error("Unable to start a guest session:", error);
+                            showToast("Unable to start a guest session. Please try again.", true);
+                        });
                 } else {
                     showToast("Please enter a goal first.", true);
                 }
@@ -693,13 +706,12 @@
                 e.preventDefault();
                 const goal = footerGoalInput.value.trim();
                 if (goal) {
-                    if (!auth.currentUser || auth.currentUser.isAnonymous) {
-                        showToast("Please sign in to build your roadmap.", true);
-                        sessionStorage.setItem('pendingGoal', goal);
-                        setTimeout(() => window.location.href = 'signin.html?redirect=personalize.html', 1500);
-                        return;
-                    }
-                    handleGenerateRoadmap(goal, footerSubmitBtn, "Get Started Free");
+                    ensureGuestSession()
+                        .then(() => handleGenerateRoadmap(goal, footerSubmitBtn, "Get Started Free"))
+                        .catch(error => {
+                            console.error("Unable to start a guest session:", error);
+                            showToast("Unable to start a guest session. Please try again.", true);
+                        });
                 } else {
                     showToast("Please enter a goal first.", true);
                 }

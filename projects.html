@@ -592,20 +592,6 @@
         let currentProject = null;
         let mobileSigninLink;
 
-        // --- AUTH GATE SYSTEM ---
-        window.requireAuth = function(event) {
-            if (!currentUser || currentUser.isAnonymous) {
-                if (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                showToast("Please sign in to access Forge features.", true);
-                setTimeout(() => { window.location.href = 'signin.html?redirect=projects.html'; }, 1500);
-                return false;
-            }
-            return true;
-        };
-
         // --- STATE: User & Trackers ---
         // Using dynamically scoped local storage keys based on UID for full state isolation
         const fallbackId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -724,7 +710,6 @@
         let currentRating = 0;
         
         window.openFeedbackModal = function(event) {
-            if (!window.requireAuth(event)) return;
             document.getElementById('feedback-modal').classList.add('visible');
             document.getElementById('feedback-backdrop').classList.add('visible');
         };
@@ -746,8 +731,6 @@
         });
 
         window.submitFeedback = async function(event) {
-            if (!window.requireAuth(event)) return;
-            
             const text = document.getElementById('feedback-text').value.trim();
             const btn = document.getElementById('submit-feedback-btn');
 
@@ -994,7 +977,6 @@
         // --- UI HELPERS ---
         window.closeModal = (id) => { document.getElementById(id).classList.remove('open'); document.body.style.overflow = 'auto'; };
         window.openPostModal = (event) => {
-            if (!window.requireAuth(event)) return;
             document.getElementById('post-modal').classList.add('open'); document.body.style.overflow = 'hidden';
             const domains = ['web', 'app', 'dsa', 'aiml', 'devops', 'data']; const diffs = ['easy', 'med', 'hard'];
             document.getElementById('post-domain').value = domains[Math.floor(Math.random() * domains.length)];
@@ -1110,7 +1092,6 @@
 
         // --- TICKET DELETION ---
         window.deleteTicket = async (id, event) => {
-            if (!window.requireAuth(event)) return;
             event.stopPropagation();
             if(!confirm("Are you sure you want to delete your generated ticket?")) return;
             
@@ -1167,7 +1148,6 @@
 
         // --- WORKSPACE LAUNCHER ---
         window.openProject = (id, event) => {
-            if (!window.requireAuth(event)) return;
             currentProject = allTickets.find(t => t.id === id); if(!currentProject) return;
             const isSolved = solvedTickets.includes(currentProject.id);
             
@@ -1346,7 +1326,6 @@ Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
 
         // --- GENERATION & POSTING ---
         window.generateFromHero = async (event) => {
-            if (!window.requireAuth(event)) return;
             const btn = document.getElementById('hero-gen-btn'); const req = document.getElementById('hero-prompt').value;
             const typeValue = document.getElementById('hero-domain').value; const diffValue = document.getElementById('hero-difficulty').value;
             if(!req.trim()) return showToast("Please describe what you want to build.", true);
@@ -1373,7 +1352,6 @@ Score 0-100. Return JSON {"score": INT, "feedback": "2 sentences"}`;
         };
 
         window.generateAITicket = async (event) => {
-            if (!window.requireAuth(event)) return;
             const btn = document.getElementById('ai-gen-btn'); btn.disabled = true; btn.innerHTML = "⏳ Drafting...";
             const prompt = `Create a realistic Jira ticket. Return JSON: {"title": "Title", "tech": ["T1"], "scenario": "Desc", "criteria": ["C1"]}`;
             try {

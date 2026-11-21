@@ -303,6 +303,21 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        let guestSessionPromise = null;
+
+        function ensureGuestSession() {
+            if (!guestSessionPromise) {
+                guestSessionPromise = auth.authStateReady()
+                    .then(async () => {
+                        if (!auth.currentUser) await signInAnonymously(auth);
+                        return auth.currentUser;
+                    })
+                    .finally(() => {
+                        guestSessionPromise = null;
+                    });
+            }
+            return guestSessionPromise;
+        }
 
         // --- UI Elements ---
         const promptForm = document.getElementById('prompt-form');
@@ -322,7 +337,7 @@
             } else {
                 headerProfile.classList.add('hidden');
                 headerSignin.classList.remove('hidden');
-                if (!user) signInAnonymously(auth).catch(console.error);
+                if (!user) ensureGuestSession().catch(error => console.error("Unable to start a guest session:", error));
             }
         });
 
@@ -377,6 +392,8 @@
             loadingText.innerText = `Personalizing path for "${displayGoal}"...`;
 
             try {
+                await ensureGuestSession();
+
                 const response = await fetch(URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

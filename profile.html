@@ -261,7 +261,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signOut, updateProfile, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signOut, updateProfile, onAuthStateChanged, deleteUser, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, writeBatch, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -312,16 +312,23 @@
                 return;
             }
 
-            onAuthStateChanged(auth, (user) => {
-                if (user && !user.isAnonymous) {
-                    currentUserId = user.uid;
-                    headerProfileLink.classList.remove('hidden');
-                    headerSigninLink.classList.add('hidden');
-                    loadProfileData(user);
-                    listenForProgress();
-                } else {
-                    window.location.href = 'signin.html?redirect=profile.html';
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (error) {
+                        console.error("Unable to start a guest session:", error);
+                        loadingContainer.textContent = "Unable to start a guest session. Please refresh and try again.";
+                    }
+                    return;
                 }
+
+                currentUserId = user.uid;
+                headerProfileLink.classList.remove('hidden');
+                if (user.isAnonymous) headerSigninLink.classList.remove('hidden');
+                else headerSigninLink.classList.add('hidden');
+                loadProfileData(user);
+                listenForProgress();
             });
 
             profileForm.addEventListener('submit', handleUpdateProfile);
