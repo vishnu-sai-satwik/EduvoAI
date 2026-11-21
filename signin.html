@@ -211,6 +211,8 @@
         import { 
             getAuth, 
             signInWithPopup, 
+            signInWithRedirect,
+            getRedirectResult,
             GoogleAuthProvider, 
             createUserWithEmailAndPassword, 
             signInWithEmailAndPassword,
@@ -252,14 +254,29 @@
         const redirectUrl = urlParams.get('redirect') || 'dashboard.html';
         
         let isInitialLoad = true;
+        const redirectResultPromise = getRedirectResult(auth).catch(error => {
+            console.error(error);
+            showToast(getFriendlyErrorMessage(error.code), "error");
+            return null;
+        });
 
-        onAuthStateChanged(auth, (user) => {
-            if (user && !user.isAnonymous) {
-                if (isInitialLoad) {
+        onAuthStateChanged(auth, async (user) => {
+            if (isInitialLoad) {
+                isInitialLoad = false;
+                if (user && !user.isAnonymous) {
+                    const redirectResult = await redirectResultPromise;
+                    if (redirectResult?.user) {
+                        try {
+                            await saveUserToFirestore(redirectResult.user);
+                        } catch (error) {
+                            console.error(error);
+                            showToast(getFriendlyErrorMessage(error.code), "error");
+                            return;
+                        }
+                    }
                     window.location.href = redirectUrl;
                 }
             }
-            isInitialLoad = false;
         });
 
         toggleBtn.addEventListener('click', () => {
@@ -306,6 +323,16 @@
                 showToast("Signed in successfully!", "success");
                 setTimeout(() => window.location.href = redirectUrl, 1000);
             } catch (error) {
+                if (error.code === 'auth/popup-blocked') {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                        return;
+                    } catch (redirectError) {
+                        console.error(redirectError);
+                        showToast(getFriendlyErrorMessage(redirectError.code), "error");
+                        return;
+                    }
+                }
                 console.error(error);
                 showToast(getFriendlyErrorMessage(error.code), "error");
             }
@@ -360,6 +387,7 @@
                 case 'auth/user-not-found': return "No account found with this email.";
                 case 'auth/wrong-password': return "Incorrect password.";
                 case 'auth/popup-closed-by-user': return "Sign in was cancelled.";
+                case 'auth/unauthorized-domain': return "This domain is not authorized for sign-in. Add it in Firebase Authentication settings.";
                 case 'auth/weak-password': return "Password should be at least 6 characters.";
                 default: return "Authentication failed. Please try again.";
             }
